@@ -8,6 +8,8 @@ const cors    = require('cors');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+console.log(process.env.OPENAI_API_KEY);
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.use(cors());
@@ -17,9 +19,8 @@ app.use(express.static('public'));
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 20 * 1024 * 1024 }
+  limits: { fileSize: 50 * 1024 * 1024 }
 });
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
