@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Environment variables (NOOIT uploaden!)
+.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+
+# Uploads (tijdelijke bestanden)
+uploads/
+temp/
+
+
