@@ -1,580 +1,585 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>WallMockup AI — Visualize Your Walls</title>
+<title>WallMockup AI — Visualiseer Jouw Behang</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg:       #0a0a0b;
-    --surface:  #111113;
-    --surface2: #18181c;
-    --border:   rgba(255,255,255,0.07);
-    --border2:  rgba(255,255,255,0.13);
-    --gold:     #c9a96e;
-    --gold2:    #e8c990;
-    --text:     #e8e6e0;
-    --muted:    #7a7870;
-    --red:      #e05252;
-    --radius:   12px;
-    --radius2:  20px;
-  }
+:root {
+  --bg:       #0a0a0b;
+  --surface:  #111113;
+  --surface2: #18181c;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --gold:     #c9a96e;
+  --gold2:    #e8c990;
+  --text:     #e8e6e0;
+  --muted:    #7a7870;
+  --red:      #e05252;
+  --green:    #52c47a;
+  --r:        12px;
+  --r2:       20px;
+}
 
-  html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* grain */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 64px;
+  background: rgba(10,10,11,0.92);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 21px; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--gold); text-decoration: none;
+}
+.logo span { color: var(--text); font-weight: 300; }
+.logo em { font-style: italic; font-size: 17px; }
+.nav-pill {
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--border2);
+  padding: 4px 12px; border-radius: 20px;
+}
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 40px; height: 68px;
-    background: rgba(10,10,11,0.9);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px; font-weight: 600; letter-spacing: 0.05em;
-    color: var(--gold); text-decoration: none;
-  }
-  .nav-logo span { color: var(--text); font-weight: 300; }
-  .nav-tag {
-    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--muted); border: 1px solid var(--border2);
-    padding: 4px 12px; border-radius: 20px;
-  }
+/* ── HERO ── */
+.hero {
+  padding: 120px 40px 48px;
+  text-align: center; max-width: 640px; margin: 0 auto;
+}
+.eyebrow {
+  font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 18px;
+  opacity: 0; animation: up 0.7s 0.15s forwards;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 5vw, 62px); font-weight: 300; line-height: 1.1;
+  margin-bottom: 16px;
+  opacity: 0; animation: up 0.7s 0.28s forwards;
+}
+.hero h1 em { font-style: italic; color: var(--gold); }
+.hero p {
+  font-size: 14px; color: var(--muted); line-height: 1.7;
+  max-width: 420px; margin: 0 auto 28px;
+  opacity: 0; animation: up 0.7s 0.42s forwards;
+}
+@keyframes up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.gline { width: 32px; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); margin: 0 auto; }
 
-  /* ── HERO ── */
-  .hero {
-    padding: 130px 40px 50px;
-    text-align: center; max-width: 680px; margin: 0 auto;
-  }
-  .hero-eyebrow {
-    font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 20px;
-    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
-  }
-  .hero h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(38px, 5.5vw, 66px); font-weight: 300; line-height: 1.1;
-    margin-bottom: 18px;
-    opacity: 0; animation: fadeUp 0.8s 0.35s forwards;
-  }
-  .hero h1 em { font-style: italic; color: var(--gold); }
-  .hero p {
-    font-size: 14px; color: var(--muted); line-height: 1.7;
-    max-width: 440px; margin: 0 auto 32px;
-    opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .gold-line { width: 36px; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); margin: 0 auto; }
+/* ── APP LAYOUT ── */
+.app {
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 40px 80px;
+  display: grid; grid-template-columns: 390px 1fr;
+  gap: 22px; align-items: start;
+}
 
-  /* ── LAYOUT ── */
-  .app {
-    max-width: 1300px; margin: 0 auto;
-    padding: 0 40px 80px;
-    display: grid; grid-template-columns: 400px 1fr;
-    gap: 24px; align-items: start;
-  }
+/* ── PANEL ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2); overflow: hidden;
+  position: sticky; top: 84px;
+}
+.sec { padding: 22px 24px; border-bottom: 1px solid var(--border); }
+.sec:last-child { border-bottom: none; }
 
-  /* ── PANEL ── */
-  .panel {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius2); overflow: hidden;
-    position: sticky; top: 88px;
-  }
-  .ps { padding: 24px 26px; border-bottom: 1px solid var(--border); }
-  .ps:last-child { border-bottom: none; }
+.stitle {
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.stitle::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
 
-  .stitle {
-    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 16px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .stitle::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
+/* ── MODE CARDS ── */
+.mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mcard {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 14px 10px;
+  cursor: pointer; transition: all 0.22s; text-align: center;
+}
+.mcard:hover { border-color: var(--border2); }
+.mcard.on { background: rgba(201,169,110,0.1); border-color: var(--gold); }
+.mcard-ico { font-size: 20px; margin-bottom: 5px; }
+.mcard-name { font-size: 12px; color: var(--text); margin-bottom: 3px; font-weight: 400; }
+.mcard.on .mcard-name { color: var(--gold); }
+.mcard-sub { font-size: 10px; color: var(--muted); line-height: 1.4; }
 
-  /* ── MODE SWITCHER (big tabs at top) ── */
-  .mode-switch {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 8px; margin-bottom: 0;
-  }
-  .mode-card {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px 12px;
-    cursor: pointer; transition: all 0.25s; text-align: center;
-  }
-  .mode-card:hover { border-color: var(--border2); }
-  .mode-card.active {
-    background: rgba(201,169,110,0.1);
-    border-color: var(--gold);
-  }
-  .mode-card-icon { font-size: 22px; margin-bottom: 6px; }
-  .mode-card-title { font-size: 13px; color: var(--text); margin-bottom: 3px; }
-  .mode-card-sub { font-size: 10px; color: var(--muted); line-height: 1.4; }
-  .mode-card.active .mode-card-title { color: var(--gold); }
+/* ── UPLOAD ZONES ── */
+.uzone {
+  border: 2px dashed var(--border2); border-radius: var(--r);
+  padding: 18px 12px; text-align: center; cursor: pointer;
+  transition: all 0.28s; position: relative; overflow: hidden;
+  background: var(--surface2);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 110px;
+}
+.uzone:hover { border-color: var(--gold); background: rgba(201,169,110,0.04); }
+.uzone.ok { border-style: solid; border-color: var(--gold); padding: 0; }
+.uzone.ok img { width: 100%; height: 110px; object-fit: cover; border-radius: calc(var(--r) - 2px); display: block; }
+.uzone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
+.uico { font-size: 22px; margin-bottom: 6px; color: var(--muted); }
+.ulabel { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.ulabel strong { display: block; color: var(--gold); font-weight: 400; font-size: 12px; margin-bottom: 2px; }
 
-  /* ── UPLOAD ZONES ── */
-  .upload-pair {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 4px;
-  }
-  .upload-single { display: block; }
+/* badges */
+.breq, .bopt {
+  display: inline-block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 10px; margin-bottom: 8px;
+}
+.breq { color: var(--red);   border: 1px solid rgba(224,82,82,0.3); }
+.bopt { color: var(--muted); border: 1px solid var(--border2); }
 
-  .uzone {
-    border: 2px dashed var(--border2); border-radius: var(--radius);
-    padding: 20px 12px; text-align: center; cursor: pointer;
-    transition: all 0.3s; position: relative; overflow: hidden;
-    background: var(--surface2); min-height: 120px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-  }
-  .uzone:hover { border-color: var(--gold); background: rgba(201,169,110,0.04); }
-  .uzone.filled { border-style: solid; border-color: var(--gold); padding: 0; min-height: 120px; }
-  .uzone.filled img { width: 100%; height: 120px; object-fit: cover; border-radius: calc(var(--radius) - 2px); display: block; }
-  .uzone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .uzone-icon { font-size: 20px; margin-bottom: 6px; color: var(--muted); }
-  .uzone-label { font-size: 11px; color: var(--muted); line-height: 1.4; }
-  .uzone-label strong { display: block; color: var(--gold); font-weight: 400; font-size: 12px; margin-bottom: 2px; }
+/* ── FORM ── */
+.field { margin-bottom: 13px; }
+.field:last-child { margin-bottom: 0; }
+.field label {
+  display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px;
+}
+.field input, .field select, .field textarea {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 10px 13px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300;
+  transition: border-color 0.22s; appearance: none; outline: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--gold); background: rgba(201,169,110,0.03);
+}
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%237a7870' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  padding-right: 32px; cursor: pointer;
+}
+.field select option { background: #18181c; color: #e8e6e0; }
+.field textarea { resize: vertical; min-height: 78px; line-height: 1.5; }
 
-  /* badge */
-  .badge-req {
-    display: inline-block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--red); border: 1px solid rgba(224,82,82,0.3);
-    padding: 2px 8px; border-radius: 10px; margin-bottom: 10px;
-  }
-  .badge-opt {
-    display: inline-block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--muted); border: 1px solid var(--border2);
-    padding: 2px 8px; border-radius: 10px; margin-bottom: 10px;
-  }
+/* chips */
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.chip {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 3px 11px; font-size: 11px;
+  color: var(--muted); cursor: pointer; transition: all 0.18s;
+}
+.chip:hover { border-color: var(--gold); color: var(--gold); }
 
-  /* ── FORM ── */
-  .field { margin-bottom: 14px; }
-  .field:last-child { margin-bottom: 0; }
-  .field label {
-    display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 7px;
-  }
-  .field input, .field select, .field textarea {
-    width: 100%; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 10px 13px; color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300;
-    transition: border-color 0.25s; appearance: none; outline: none;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    border-color: var(--gold); background: rgba(201,169,110,0.03);
-  }
-  .field select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7870' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 13px center;
-    padding-right: 34px; cursor: pointer;
-  }
-  .field select option { background: #18181c; color: #e8e6e0; }
-  .field textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+/* dtype */
+.dtrow { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 14px; }
+.dtbtn {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 10px 8px;
+  color: var(--muted); font-family: 'DM Sans', sans-serif;
+  font-size: 12px; cursor: pointer; transition: all 0.22s; text-align: center; line-height: 1.3;
+}
+.dtbtn:hover { border-color: var(--border2); color: var(--text); }
+.dtbtn.on { background: rgba(201,169,110,0.12); border-color: var(--gold); color: var(--gold); }
 
-  /* ── CHIPS ── */
-  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
-  .chip {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 20px; padding: 4px 11px; font-size: 11px;
-    color: var(--muted); cursor: pointer; transition: all 0.2s;
-  }
-  .chip:hover { border-color: var(--gold); color: var(--gold); }
+/* view cards */
+.vrow { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.vcard {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 12px 10px;
+  cursor: pointer; transition: all 0.22s; text-align: center;
+}
+.vcard:hover { border-color: var(--border2); }
+.vcard.on { background: rgba(201,169,110,0.1); border-color: var(--gold); }
+.vcard-ico { font-size: 16px; margin-bottom: 4px; }
+.vcard-name { font-size: 12px; color: var(--text); margin-bottom: 2px; }
+.vcard-sub { font-size: 10px; color: var(--muted); }
+.vcard.on .vcard-name { color: var(--gold); }
 
-  /* ── DESIGN TYPE ── */
-  .dtype-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .dtype-btn {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 11px 10px;
-    color: var(--muted); font-family: 'DM Sans', sans-serif;
-    font-size: 12px; cursor: pointer; transition: all 0.25s; text-align: center; line-height: 1.3;
-  }
-  .dtype-btn:hover { border-color: var(--border2); color: var(--text); }
-  .dtype-btn.active { background: rgba(201,169,110,0.12); border-color: var(--gold); color: var(--gold); }
+/* ── GENERATE BTN ── */
+.genbtn {
+  width: 100%; padding: 15px 20px;
+  background: linear-gradient(135deg, #c9a96e 0%, #a07840 100%);
+  border: none; border-radius: var(--r);
+  color: #0a0a0b; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; cursor: pointer; transition: all 0.28s;
+  position: relative; overflow: hidden;
+}
+.genbtn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent);
+  opacity: 0; transition: opacity 0.28s;
+}
+.genbtn:hover::after { opacity: 1; }
+.genbtn:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,169,110,0.28); }
+.genbtn:active { transform: translateY(0); }
+.genbtn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+.genbtn-sub { font-size: 10px; opacity: 0.65; font-weight: 400; letter-spacing: 0; text-transform: none; margin-left: 5px; }
 
-  /* ── VIEW + ROOM SELECTORS (AI mode only) ── */
-  .view-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .view-card {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 13px 10px;
-    cursor: pointer; transition: all 0.25s; text-align: center;
-  }
-  .view-card:hover { border-color: var(--border2); }
-  .view-card.active { background: rgba(201,169,110,0.1); border-color: var(--gold); }
-  .view-card-icon { font-size: 18px; margin-bottom: 5px; }
-  .view-card-title { font-size: 12px; color: var(--text); margin-bottom: 2px; }
-  .view-card-sub { font-size: 10px; color: var(--muted); }
-  .view-card.active .view-card-title { color: var(--gold); }
+/* ── ERROR ── */
+.errbox {
+  background: rgba(224,82,82,0.08); border: 1px solid rgba(224,82,82,0.25);
+  border-radius: var(--r); padding: 12px 16px;
+  color: #e09090; font-size: 13px; line-height: 1.6;
+  display: flex; gap: 9px; align-items: flex-start; margin-bottom: 13px;
+}
 
-  /* ── GENERATE BUTTON ── */
-  .gen-btn {
-    width: 100%; padding: 15px 20px;
-    background: linear-gradient(135deg, #c9a96e, #a07840);
-    border: none; border-radius: var(--radius);
-    color: #0a0a0b; font-family: 'DM Sans', sans-serif;
-    font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
-    text-transform: uppercase; cursor: pointer; transition: all 0.3s;
-    position: relative; overflow: hidden;
-  }
-  .gen-btn::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .gen-btn:hover::before { opacity: 1; }
-  .gen-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,169,110,0.3); }
-  .gen-btn:active { transform: translateY(0); }
-  .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+/* ── RESULT AREA ── */
+.result { min-height: 480px; }
 
-  /* ── ERROR ── */
-  .error-box {
-    background: rgba(224,82,82,0.08); border: 1px solid rgba(224,82,82,0.25);
-    border-radius: var(--radius); padding: 14px 18px;
-    color: #e08888; font-size: 13px; line-height: 1.6;
-    display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px;
-  }
+/* placeholder */
+.ph {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r2); height: 500px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; text-align: center; padding: 40px;
+}
+.ph-ico { font-size: 42px; opacity: 0.2; }
+.ph-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 300;
+  color: var(--text); opacity: 0.3;
+}
+.ph-sub { font-size: 13px; color: var(--muted); opacity: 0.45; max-width: 260px; line-height: 1.6; }
 
-  /* ── RESULT AREA ── */
-  .result-area { min-height: 500px; }
+/* loading */
+.ld {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r2); height: 500px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 20px;
+}
+.spin {
+  width: 44px; height: 44px; border: 2px solid var(--border2);
+  border-top-color: var(--gold); border-radius: 50%;
+  animation: rot 0.9s linear infinite;
+}
+@keyframes rot { to { transform: rotate(360deg); } }
+.ld-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic;
+  color: var(--muted); text-align: center;
+}
+.ld-steps { display: flex; flex-direction: column; gap: 6px; text-align: center; }
+.lstep { font-size: 12px; color: var(--muted); opacity: 0; transition: opacity 0.4s; }
+.lstep.vis { opacity: 0.55; }
 
-  .placeholder {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius2); height: 520px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 14px; text-align: center; padding: 40px;
-  }
-  .ph-icon { font-size: 44px; opacity: 0.25; }
-  .ph-title {
-    font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300;
-    color: var(--text); opacity: 0.35;
-  }
-  .ph-sub { font-size: 13px; color: var(--muted); opacity: 0.5; max-width: 280px; line-height: 1.6; }
+/* result card */
+.rcard {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r2); overflow: hidden;
+  animation: fadeIn 0.55s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rimgw { position: relative; overflow: hidden; }
+.rimgw img { width: 100%; display: block; transition: transform 0.45s ease; }
+.rimgw:hover img { transform: scale(1.012); }
+.rov {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 48%);
+  opacity: 0; transition: opacity 0.28s;
+  display: flex; align-items: flex-end; padding: 20px; gap: 9px;
+}
+.rimgw:hover .rov { opacity: 1; }
+.obtn {
+  background: rgba(255,255,255,0.13); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.18); border-radius: 8px;
+  padding: 8px 15px; color: white; font-family: 'DM Sans', sans-serif;
+  font-size: 12px; cursor: pointer; transition: all 0.18s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+}
+.obtn:hover { background: rgba(255,255,255,0.22); }
+.obtn.g { background: rgba(201,169,110,0.28); border-color: rgba(201,169,110,0.5); color: var(--gold2); }
+.rmeta {
+  padding: 16px 22px; display: flex; justify-content: space-between;
+  align-items: center; border-top: 1px solid var(--border);
+}
+.rinfo { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.rinfo strong { display: block; font-size: 14px; color: var(--text); font-weight: 400; margin-bottom: 2px; }
+.racts { display: flex; gap: 8px; }
+.abtn {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 8px 14px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer;
+  transition: all 0.18s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.abtn:hover { border-color: var(--gold); color: var(--gold); }
+.abtn.p { background: rgba(201,169,110,0.12); border-color: var(--gold); color: var(--gold); }
 
-  /* ── LOADING ── */
-  .loading {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius2); height: 520px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 22px;
-  }
-  .spinner {
-    width: 46px; height: 46px; border: 2px solid var(--border2);
-    border-top-color: var(--gold); border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-title {
-    font-family: 'Cormorant Garamond', serif; font-size: 21px; font-style: italic;
-    color: var(--muted); text-align: center;
-  }
-  .loading-steps { display: flex; flex-direction: column; gap: 7px; text-align: center; }
-  .lstep { font-size: 12px; color: var(--muted); opacity: 0; transition: opacity 0.5s; }
-  .lstep.show { opacity: 0.6; }
+/* history */
+.hist { margin-top: 20px; }
+.hist-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 13px; padding: 0 2px;
+}
+.hist-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; }
+.clrbtn {
+  font-size: 11px; color: var(--muted); background: none; border: none;
+  cursor: pointer; transition: color 0.18s; font-family: 'DM Sans', sans-serif;
+}
+.clrbtn:hover { color: var(--red); }
+.hgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.hitem {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden; cursor: pointer;
+  transition: all 0.22s; aspect-ratio: 16/9;
+}
+.hitem:hover { border-color: var(--gold); transform: translateY(-2px); }
+.hitem img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  /* ── RESULT CARD ── */
-  .rcard {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius2); overflow: hidden;
-    animation: fadeIn 0.6s ease;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .rimg-wrap { position: relative; overflow: hidden; }
-  .rimg-wrap img { width: 100%; display: block; transition: transform 0.5s ease; }
-  .rimg-wrap:hover img { transform: scale(1.015); }
-  .roverlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%);
-    opacity: 0; transition: opacity 0.3s;
-    display: flex; align-items: flex-end; padding: 22px; gap: 10px;
-  }
-  .rimg-wrap:hover .roverlay { opacity: 1; }
-  .obtn {
-    background: rgba(255,255,255,0.14); backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
-    padding: 8px 16px; color: white; font-family: 'DM Sans', sans-serif;
-    font-size: 12px; cursor: pointer; transition: all 0.2s;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
-  }
-  .obtn:hover { background: rgba(255,255,255,0.22); }
-  .obtn.gold { background: rgba(201,169,110,0.28); border-color: rgba(201,169,110,0.5); color: var(--gold2); }
-  .rmeta {
-    padding: 18px 22px; display: flex; justify-content: space-between;
-    align-items: center; border-top: 1px solid var(--border);
-  }
-  .rinfo { font-size: 12px; color: var(--muted); line-height: 1.6; }
-  .rinfo strong { display: block; font-size: 14px; color: var(--text); font-weight: 400; margin-bottom: 2px; }
-  .raction { display: flex; gap: 9px; }
-  .abtn {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 8px 15px; color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer;
-    transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
-  }
-  .abtn:hover { border-color: var(--gold); color: var(--gold); }
-  .abtn.p { background: rgba(201,169,110,0.12); border-color: var(--gold); color: var(--gold); }
+/* responsive */
+@media (max-width: 880px) {
+  .app { grid-template-columns: 1fr; padding: 0 16px 60px; }
+  .panel { position: static; }
+  nav, .hero { padding-left: 16px; padding-right: 16px; }
+  .hgrid { grid-template-columns: repeat(2, 1fr); }
+}
 
-  /* ── HISTORY ── */
-  .history { margin-top: 22px; }
-  .hist-head {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 14px; padding: 0 2px;
-  }
-  .hist-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 300; }
-  .clr-btn {
-    font-size: 11px; color: var(--muted); background: none; border: none;
-    cursor: pointer; transition: color 0.2s; font-family: 'DM Sans', sans-serif;
-  }
-  .clr-btn:hover { color: var(--red); }
-  .hist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; }
-  .hitem {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden; cursor: pointer;
-    transition: all 0.25s; aspect-ratio: 16/9; position: relative;
-  }
-  .hitem:hover { border-color: var(--gold); transform: translateY(-2px); }
-  .hitem img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; padding: 0 18px 60px; }
-    .panel { position: static; }
-    nav { padding: 0 18px; }
-    .hero { padding: 110px 18px 40px; }
-    .hist-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <a class="nav-logo" href="#">Wall<span>Mockup</span> <em style="font-style:italic;font-family:'Cormorant Garamond',serif;font-size:18px;">AI</em></a>
-  <span class="nav-tag">Powered by OpenAI</span>
+  <a class="logo" href="#">Wall<span>Mockup</span> <em>AI</em></a>
+  <span class="nav-pill">Powered by OpenAI</span>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-  <p class="hero-eyebrow">AI Interior Visualization</p>
-  <h1>See Your Wallpaper <em>Come to Life</em></h1>
-  <p>Upload your room photo and wallpaper design — AI places it on your exact wall, keeping everything else identical.</p>
-  <div class="gold-line"></div>
+  <p class="eyebrow">AI Interieur Visualisatie</p>
+  <h1>Zie Jouw Behang <em>Tot Leven Komen</em></h1>
+  <p>Upload je kamer foto en behang — AI plaatst het exact op jouw muur. Alles blijft hetzelfde, alleen de muur verandert.</p>
+  <div class="gline"></div>
 </section>
 
+<!-- APP -->
 <div class="app">
 
-  <!-- ─── PANEL ─── -->
+  <!-- ─── LINKER PANEL ─── -->
   <aside class="panel">
 
-    <!-- MODE SELECT -->
-    <div class="ps">
-      <div class="stitle">Generation Mode</div>
-      <div class="mode-switch">
-        <div class="mode-card active" id="modeCardUpload" onclick="setMode('upload')">
-          <div class="mode-card-icon">📷</div>
-          <div class="mode-card-title">My Room Photo</div>
-          <div class="mode-card-sub">Upload your room — AI applies wallpaper on your exact wall</div>
+    <!-- MODUS -->
+    <div class="sec">
+      <div class="stitle">Modus</div>
+      <div class="mode-row">
+        <div class="mcard on" id="mc-upload" onclick="setMode('upload')">
+          <div class="mcard-ico">📷</div>
+          <div class="mcard-name">Mijn Kamer</div>
+          <div class="mcard-sub">Upload je kamer — AI zet behang op jouw muur</div>
         </div>
-        <div class="mode-card" id="modeCardAI" onclick="setMode('ai')">
-          <div class="mode-card-icon">✦</div>
-          <div class="mode-card-title">AI Generate Room</div>
-          <div class="mode-card-sub">AI creates a full room with your wallpaper</div>
+        <div class="mcard" id="mc-ai" onclick="setMode('ai')">
+          <div class="mcard-ico">✦</div>
+          <div class="mcard-name">AI Kamer</div>
+          <div class="mcard-sub">AI genereert een kamer met jouw behang</div>
         </div>
       </div>
     </div>
 
-    <!-- UPLOAD MODE: room + wallpaper photos -->
-    <div class="ps" id="uploadSection">
-      <div class="stitle">Upload Photos</div>
+    <!-- UPLOAD MODUS: kamer + behang foto -->
+    <div class="sec" id="sec-upload">
+      <div class="stitle">Foto's Uploaden</div>
 
-      <!-- Room photo -->
-      <div style="margin-bottom:16px;">
-        <span class="badge-req">Required — Your Room</span>
-        <div class="uzone upload-single" id="roomZone">
-          <input type="file" id="roomInput" accept="image/*" onchange="handleUpload('room', event)" />
-          <div class="uzone-icon">🏠</div>
-          <div class="uzone-label">
-            <strong>Upload Room Photo</strong>
-            Your actual room, any angle
+      <!-- Kamer foto -->
+      <div style="margin-bottom:14px;">
+        <span class="breq">Verplicht — Jouw Kamer</span>
+        <div class="uzone" id="z-room">
+          <input type="file" id="inp-room" accept="image/*" onchange="handleFile('room',event)" />
+          <div class="uico">🏠</div>
+          <div class="ulabel">
+            <strong>Upload Kamer Foto</strong>
+            Jouw echte kamer, elke hoek
           </div>
         </div>
       </div>
 
-      <!-- Wallpaper photo -->
+      <!-- Behang foto -->
       <div>
-        <span class="badge-opt">Optional — Wallpaper Photo</span>
-        <div class="uzone upload-single" id="wallZone">
-          <input type="file" id="wallInput" accept="image/*" onchange="handleUpload('wall', event)" />
-          <div class="uzone-icon">🖼</div>
-          <div class="uzone-label">
-            <strong>Upload Wallpaper Design</strong>
-            Or describe it below
+        <span class="bopt">Optioneel — Behang Foto</span>
+        <div class="uzone" id="z-wall">
+          <input type="file" id="inp-wall" accept="image/*" onchange="handleFile('wall',event)" />
+          <div class="uico">🖼</div>
+          <div class="ulabel">
+            <strong>Upload Behang / Afbeelding</strong>
+            Of beschrijf het hieronder
           </div>
         </div>
       </div>
     </div>
 
-    <!-- AI MODE: wallpaper photo only -->
-    <div class="ps" id="aiUploadSection" style="display:none;">
-      <div class="stitle">Wallpaper Design</div>
-      <span class="badge-opt">Optional — Photo</span>
-      <div class="uzone upload-single" id="wallZoneAI">
-        <input type="file" id="wallInputAI" accept="image/*" onchange="handleUpload('wallAI', event)" />
-        <div class="uzone-icon">🖼</div>
-        <div class="uzone-label">
-          <strong>Upload Wallpaper Design</strong>
-          Or describe it below
+    <!-- AI MODUS: alleen behang foto -->
+    <div class="sec" id="sec-ai-wall" style="display:none;">
+      <div class="stitle">Behang Ontwerp</div>
+      <span class="bopt">Optioneel — Foto</span>
+      <div class="uzone" id="z-wall-ai">
+        <input type="file" id="inp-wall-ai" accept="image/*" onchange="handleFile('wallai',event)" />
+        <div class="uico">🖼</div>
+        <div class="ulabel">
+          <strong>Upload Behang / Afbeelding</strong>
+          Of beschrijf het hieronder
         </div>
       </div>
     </div>
 
-    <!-- WALLPAPER DESCRIPTION -->
-    <div class="ps">
-      <div class="stitle">Describe Wallpaper</div>
+    <!-- BEHANG BESCHRIJVING -->
+    <div class="sec">
+      <div class="stitle">Beschrijf Behang</div>
       <div class="field">
-        <textarea id="wallDesc" placeholder="e.g. tropical botanical leaves, deep green and gold on cream background..."></textarea>
+        <textarea id="wdesc" placeholder="bijv. tropische bladeren in donkergroen en goud op crème achtergrond..."></textarea>
       </div>
       <div class="chips">
-        <span class="chip" onclick="addChip('Botanical floral')">Botanical floral</span>
-        <span class="chip" onclick="addChip('Geometric art deco')">Art deco</span>
-        <span class="chip" onclick="addChip('Abstract watercolor')">Watercolor</span>
-        <span class="chip" onclick="addChip('Marble texture')">Marble</span>
-        <span class="chip" onclick="addChip('Tropical leaves')">Tropical</span>
-        <span class="chip" onclick="addChip('Vintage damask')">Damask</span>
+        <span class="chip" onclick="chip('Botanische bloemen')">Botanisch</span>
+        <span class="chip" onclick="chip('Geometrisch art deco')">Art deco</span>
+        <span class="chip" onclick="chip('Abstract aquarel')">Aquarel</span>
+        <span class="chip" onclick="chip('Marmertextuur')">Marmer</span>
+        <span class="chip" onclick="chip('Tropische bladeren')">Tropisch</span>
+        <span class="chip" onclick="chip('Vintage damast')">Damast</span>
       </div>
 
       <!-- Design type -->
-      <div style="margin-top:16px;">
-        <label style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px;">Design Type</label>
-        <div class="dtype-group">
-          <button class="dtype-btn active" id="dt-rep" onclick="setDtype('repeating')">Repeating Pattern</button>
-          <button class="dtype-btn" id="dt-mur" onclick="setDtype('mural')">Mural / Single Piece</button>
+      <div>
+        <label style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-top:14px;margin-bottom:6px;">Ontwerp Type</label>
+        <div class="dtrow" style="margin-top:0;">
+          <button class="dtbtn on" id="dt-rep" onclick="setDtype('repeating')">Herhalend Patroon</button>
+          <button class="dtbtn" id="dt-mur" onclick="setDtype('mural')">Muurschildering / Enkel Beeld</button>
         </div>
       </div>
     </div>
 
-    <!-- AI MODE OPTIONS -->
-    <div class="ps" id="aiOptions" style="display:none;">
-      <div class="stitle">Room Settings</div>
+    <!-- AI MODUS INSTELLINGEN -->
+    <div class="sec" id="sec-ai-opts" style="display:none;">
+      <div class="stitle">Kamer Instellingen</div>
 
       <div class="field">
-        <label>View Mode</label>
-        <div class="view-grid">
-          <div class="view-card active" id="vw-wide" onclick="setView('wide')">
-            <div class="view-card-icon">⬜</div>
-            <div class="view-card-title">Wide Angle</div>
-            <div class="view-card-sub">Full room</div>
+        <label>Weergave</label>
+        <div class="vrow">
+          <div class="vcard on" id="vc-wide" onclick="setView('wide')">
+            <div class="vcard-ico">⬜</div>
+            <div class="vcard-name">Groothoek</div>
+            <div class="vcard-sub">Volledige kamer</div>
           </div>
-          <div class="view-card" id="vw-close" onclick="setView('close')">
-            <div class="view-card-icon">🔍</div>
-            <div class="view-card-title">Close-up</div>
-            <div class="view-card-sub">Wall detail</div>
+          <div class="vcard" id="vc-close" onclick="setView('close')">
+            <div class="vcard-ico">🔍</div>
+            <div class="vcard-name">Close-up</div>
+            <div class="vcard-sub">Muur detail</div>
           </div>
         </div>
       </div>
 
       <div class="field">
-        <label>Room Type</label>
-        <select id="roomType">
-          <optgroup label="Residential">
-            <option>Living Room</option><option>Bedroom</option>
-            <option>Dining Room</option><option>Kids Room</option>
-            <option>Bathroom</option><option>Entryway</option><option>Home Office</option>
+        <label>Kamer Type</label>
+        <select id="rtype">
+          <optgroup label="Woning">
+            <option>Woonkamer</option>
+            <option>Slaapkamer</option>
+            <option>Eetkamer</option>
+            <option>Kinderkamer</option>
+            <option>Badkamer</option>
+            <option>Hal / Gang</option>
+            <option>Thuiskantoor</option>
           </optgroup>
-          <optgroup label="Commercial">
-            <option>Cafe</option><option>Restaurant</option>
-            <option>Hotel Lobby</option><option>Boutique Shop</option>
-            <option>Co-Working Space</option>
+          <optgroup label="Commercieel">
+            <option>Café</option>
+            <option>Restaurant</option>
+            <option>Hotel Lobby</option>
+            <option>Winkel / Boutique</option>
+            <option>Co-Working Ruimte</option>
           </optgroup>
         </select>
       </div>
 
       <div class="field">
-        <label>Decoration Style</label>
-        <select id="decorStyle">
-          <option>Auto (Harmonious)</option><option>Modern</option>
-          <option>Bohemian</option><option>Scandinavian</option>
-          <option>Industrial</option><option>Classic / Traditional</option>
-          <option>Luxury</option><option>Minimalist</option>
-          <option>Art Deco</option><option>Biophilic (Natural)</option>
-          <option>Retro 70s</option><option>Rustic</option>
+        <label>Decoratiestijl</label>
+        <select id="dstyle">
+          <option>Auto (Harmonieus)</option>
+          <option>Modern</option>
+          <option>Bohemien</option>
+          <option>Scandinavisch</option>
+          <option>Industrieel</option>
+          <option>Klassiek / Traditioneel</option>
+          <option>Luxe</option>
+          <option>Minimalistisch</option>
+          <option>Art Deco</option>
+          <option>Biofiel (Natuur)</option>
+          <option>Retro 70s</option>
+          <option>Rustiek</option>
         </select>
       </div>
 
       <div class="field">
-        <label>Wall Architecture</label>
-        <select id="wallArch">
-          <option>Plain Wall</option><option>Corner View</option>
-          <option>Window (Center)</option><option>Window (Side)</option>
-          <option>With Door</option><option>Archway</option><option>Wainscoting</option>
+        <label>Wandarchitectuur</label>
+        <select id="warch">
+          <option>Vlakke Muur</option>
+          <option>Hoekweergave</option>
+          <option>Raam (Midden)</option>
+          <option>Raam (Zij)</option>
+          <option>Met Deur</option>
+          <option>Boogdeur</option>
+          <option>Lambrisering</option>
         </select>
       </div>
     </div>
 
-    <!-- ERROR + GENERATE -->
-    <div class="ps">
-      <div class="error-box" id="errBox" style="display:none;">
-        <span>⚠</span><span id="errMsg"></span>
+    <!-- FOUT + GENEREER -->
+    <div class="sec">
+      <div class="errbox" id="err" style="display:none;">
+        <span>⚠</span><span id="errmsg"></span>
       </div>
-      <button class="gen-btn" id="genBtn" onclick="generate()">
-        Generate Mockup &nbsp;<span style="font-size:10px;opacity:0.7;font-weight:400;letter-spacing:0;text-transform:none;">(HD Quality)</span>
+      <button class="genbtn" id="genbtn" onclick="generate()">
+        Genereer Mockup<span class="genbtn-sub">(HD Kwaliteit)</span>
       </button>
     </div>
 
   </aside>
 
-  <!-- ─── RESULT ─── -->
-  <main class="result-area">
+  <!-- ─── RECHTER RESULTAAT AREA ─── -->
+  <main class="result">
 
-    <div class="placeholder" id="ph">
-      <div class="ph-icon">🖼</div>
-      <div class="ph-title">Your Mockup Appears Here</div>
-      <p class="ph-sub">Upload your room photo + wallpaper, then hit Generate. AI will place the wallpaper on your exact wall.</p>
+    <div class="ph" id="ph">
+      <div class="ph-ico">🖼</div>
+      <div class="ph-title">Jouw Mockup Verschijnt Hier</div>
+      <p class="ph-sub">Upload je kamer en behang foto, druk op Genereer. AI plaatst het behang exact op jouw muur.</p>
     </div>
 
-    <div class="loading" id="ld" style="display:none;">
-      <div class="spinner"></div>
-      <div class="loading-title">Crafting your visualization…</div>
-      <div class="loading-steps" id="ldSteps"></div>
+    <div class="ld" id="ld" style="display:none;">
+      <div class="spin"></div>
+      <div class="ld-title">Jouw visualisatie wordt gemaakt…</div>
+      <div class="ld-steps" id="ldsteps"></div>
     </div>
 
-    <div id="rcWrap" style="display:none;"></div>
+    <div id="rcwrap" style="display:none;"></div>
 
-    <div class="history" id="histSec" style="display:none;">
+    <div class="hist" id="histsec" style="display:none;">
       <div class="hist-head">
-        <h3 class="hist-title">Previous Generations</h3>
-        <button class="clr-btn" onclick="clearHist()">Clear all</button>
+        <h3 class="hist-title">Eerdere Generaties</h3>
+        <button class="clrbtn" onclick="clearHist()">Alles wissen</button>
       </div>
-      <div class="hist-grid" id="histGrid"></div>
+      <div class="hgrid" id="hgrid"></div>
     </div>
 
   </main>
@@ -583,89 +588,92 @@
 <script>
 // ─── STATE ──────────────────────────────────────────────
 const S = {
-  mode: 'upload',       // 'upload' | 'ai'
+  mode:  'upload',   // 'upload' | 'ai'
   dtype: 'repeating',
-  view: 'wide',
-  roomFile: null,
-  wallFile: null,
+  view:  'wide',
+  roomFile:   null,
+  wallFile:   null,
   wallAIFile: null,
-  history: (() => { try { return JSON.parse(localStorage.getItem('wm_hist') || '[]'); } catch { return []; } })()
+  history: (() => { try { return JSON.parse(localStorage.getItem('wm3') || '[]'); } catch { return []; } })()
 };
 
 document.addEventListener('DOMContentLoaded', renderHist);
 
-// ─── MODE ──────────────────────────────────────────────
+// ─── MODUS ──────────────────────────────────────────────
 function setMode(m) {
   S.mode = m;
-  document.getElementById('modeCardUpload').classList.toggle('active', m === 'upload');
-  document.getElementById('modeCardAI').classList.toggle('active', m === 'ai');
-  document.getElementById('uploadSection').style.display   = m === 'upload' ? '' : 'none';
-  document.getElementById('aiUploadSection').style.display = m === 'ai' ? '' : 'none';
-  document.getElementById('aiOptions').style.display       = m === 'ai' ? '' : 'none';
+  document.getElementById('mc-upload').classList.toggle('on', m === 'upload');
+  document.getElementById('mc-ai').classList.toggle('on', m === 'ai');
+  document.getElementById('sec-upload').style.display     = m === 'upload' ? '' : 'none';
+  document.getElementById('sec-ai-wall').style.display    = m === 'ai' ? '' : 'none';
+  document.getElementById('sec-ai-opts').style.display    = m === 'ai' ? '' : 'none';
 }
 
 function setDtype(t) {
   S.dtype = t;
-  document.getElementById('dt-rep').classList.toggle('active', t === 'repeating');
-  document.getElementById('dt-mur').classList.toggle('active', t === 'mural');
+  document.getElementById('dt-rep').classList.toggle('on', t === 'repeating');
+  document.getElementById('dt-mur').classList.toggle('on', t === 'mural');
 }
 
 function setView(v) {
   S.view = v;
-  document.getElementById('vw-wide').classList.toggle('active', v === 'wide');
-  document.getElementById('vw-close').classList.toggle('active', v === 'close');
+  document.getElementById('vc-wide').classList.toggle('on', v === 'wide');
+  document.getElementById('vc-close').classList.toggle('on', v === 'close');
 }
 
-function addChip(t) {
-  const ta = document.getElementById('wallDesc');
+function chip(t) {
+  const ta = document.getElementById('wdesc');
   ta.value = (ta.value ? ta.value + ', ' : '') + t;
   ta.focus();
 }
 
-// ─── FILE UPLOADS ───────────────────────────────────────
-function handleUpload(type, e) {
+// ─── BESTANDEN UPLOADEN ─────────────────────────────────
+function handleFile(type, e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  const zoneId = { room: 'roomZone', wall: 'wallZone', wallAI: 'wallZoneAI' }[type];
-  const zone = document.getElementById(zoneId);
-  const url = URL.createObjectURL(file);
+  const ids = { room: 'z-room', wall: 'z-wall', wallai: 'z-wall-ai' };
+  const zone = document.getElementById(ids[type]);
+  const url  = URL.createObjectURL(file);
 
-  zone.classList.add('filled');
-  zone.innerHTML = `<img src="${url}" alt="preview" /><input type="file" style="position:absolute;inset:0;opacity:0;cursor:pointer;" accept="image/*" onchange="handleUpload('${type}', event)" />`;
+  zone.classList.add('ok');
+  zone.innerHTML = `
+    <img src="${url}" alt="preview" />
+    <input type="file" style="position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;" accept="image/*" onchange="handleFile('${type}',event)" />
+  `;
 
-  if (type === 'room') S.roomFile = file;
-  else if (type === 'wall') S.wallFile = file;
-  else if (type === 'wallAI') S.wallAIFile = file;
+  if (type === 'room')   S.roomFile   = file;
+  if (type === 'wall')   S.wallFile   = file;
+  if (type === 'wallai') S.wallAIFile = file;
 }
 
 // ─── LOADING ────────────────────────────────────────────
-const STEPS_UPLOAD = [
-  'Analyzing your room photo…',
-  'Identifying wall surfaces…',
-  'Studying wallpaper design…',
-  'Applying wallpaper to your wall…',
-  'Finalizing photorealistic details…'
+const STAPPEN_UPLOAD = [
+  'Kamer foto analyseren…',
+  'Muuroppervlak identificeren…',
+  'Behang ontwerp bestuderen…',
+  'Behang op jouw muur plaatsen…',
+  'Fotorealistische details verfijnen…'
 ];
-const STEPS_AI = [
-  'Designing room composition…',
-  'Generating wallpaper layout…',
-  'Applying textures and lighting…',
-  'Rendering photorealistic details…',
-  'Finalizing your mockup…'
+const STAPPEN_AI = [
+  'Kamer compositie ontwerpen…',
+  'Behang indeling genereren…',
+  'Texturen en belichting toepassen…',
+  'Fotorealistische details renderen…',
+  'Jouw mockup afronden…'
 ];
 
 let ldTimer;
 
 function startLoading() {
-  document.getElementById('ph').style.display = 'none';
-  document.getElementById('rcWrap').style.display = 'none';
-  document.getElementById('ld').style.display = 'flex';
-  document.getElementById('errBox').style.display = 'none';
+  document.getElementById('ph').style.display    = 'none';
+  document.getElementById('rcwrap').style.display = 'none';
+  document.getElementById('ld').style.display    = 'flex';
+  document.getElementById('err').style.display   = 'none';
 
-  const el = document.getElementById('ldSteps');
+  const el     = document.getElementById('ldsteps');
   el.innerHTML = '';
-  const steps = S.mode === 'upload' ? STEPS_UPLOAD : STEPS_AI;
+  const steps  = S.mode === 'upload' ? STAPPEN_UPLOAD : STAPPEN_AI;
   let i = 0;
 
   function next() {
@@ -674,11 +682,11 @@ function startLoading() {
       d.className = 'lstep';
       d.textContent = '— ' + steps[i++];
       el.appendChild(d);
-      requestAnimationFrame(() => d.classList.add('show'));
+      requestAnimationFrame(() => d.classList.add('vis'));
     }
   }
   next();
-  ldTimer = setInterval(next, 4000);
+  ldTimer = setInterval(next, 4500);
 }
 
 function stopLoading() {
@@ -686,138 +694,131 @@ function stopLoading() {
   document.getElementById('ld').style.display = 'none';
 }
 
-// ─── GENERATE ───────────────────────────────────────────
+// ─── GENEREREN ──────────────────────────────────────────
 async function generate() {
-  const desc = document.getElementById('wallDesc').value.trim();
+  const desc = document.getElementById('wdesc').value.trim();
 
-  // Validation
   if (S.mode === 'upload') {
-    if (!S.roomFile) { showErr('Please upload your room photo first.'); return; }
-    if (!S.wallFile && !desc) { showErr('Please upload a wallpaper photo or describe it.'); return; }
+    if (!S.roomFile) { toonFout('Upload eerst je kamer foto.'); return; }
+    if (!S.wallFile && !desc) { toonFout('Upload een behang foto of beschrijf het behang.'); return; }
   } else {
-    if (!S.wallAIFile && !desc) { showErr('Please upload a wallpaper design or describe it.'); return; }
+    if (!S.wallAIFile && !desc) { toonFout('Upload een behang foto of beschrijf het behang.'); return; }
   }
 
-  hideErr();
-  const btn = document.getElementById('genBtn');
-  btn.disabled = true;
+  verbergFout();
+  document.getElementById('genbtn').disabled = true;
   startLoading();
 
   try {
-    let result;
-    if (S.mode === 'upload') {
-      result = await doApply(desc);
-    } else {
-      result = await doAI(desc);
-    }
+    const result = S.mode === 'upload' ? await doUpload(desc) : await doAI(desc);
     stopLoading();
-    showResult(result);
-    saveHist(result);
+    toonResultaat(result);
+    slaOpInHist(result);
   } catch (err) {
     stopLoading();
-    showErr(err.message || 'Something went wrong. Please try again.');
+    toonFout(err.message || 'Er ging iets mis. Probeer opnieuw.');
     document.getElementById('ph').style.display = 'flex';
   } finally {
-    btn.disabled = false;
+    document.getElementById('genbtn').disabled = false;
   }
 }
 
-async function doApply(desc) {
+async function doUpload(desc) {
   const fd = new FormData();
   fd.append('roomPhoto', S.roomFile);
   if (S.wallFile) fd.append('wallpaperPhoto', S.wallFile);
   fd.append('wallpaperDescription', desc || '');
   fd.append('designType', S.dtype);
-  fd.append('decorationStyle', document.getElementById('decorStyle')?.value || 'Modern');
 
   const r = await fetch('/api/apply-wallpaper', { method: 'POST', body: fd });
   const d = await r.json();
-  if (!d.success) throw new Error(d.error || 'Failed to apply wallpaper.');
-  return { imageUrl: d.imageUrl, label: 'Your Room', sub: desc.substring(0, 70) || 'Custom wallpaper applied' };
+  if (!d.success) throw new Error(d.error || 'Behang plaatsen mislukt.');
+  return { imageUrl: d.imageUrl, label: 'Jouw Kamer', sub: desc ? desc.substring(0, 70) : 'Behang toegepast op jouw muur' };
 }
 
 async function doAI(desc) {
-  const body = {
-    wallpaperDescription: desc || 'elegant decorative pattern',
-    designType: S.dtype,
-    roomType: document.getElementById('roomType').value,
-    decorationStyle: document.getElementById('decorStyle').value,
-    wallArchitecture: document.getElementById('wallArch').value,
-    viewMode: S.view,
-    resolution: '2K'
-  };
-  const r = await fetch('/api/generate-room', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+  const fd = new FormData();
+  fd.append('wallpaperDescription', desc || '');
+  fd.append('designType', S.dtype);
+  fd.append('roomType', document.getElementById('rtype').value);
+  fd.append('decorationStyle', document.getElementById('dstyle').value);
+  fd.append('wallArchitecture', document.getElementById('warch').value);
+  fd.append('viewMode', S.view);
+  if (S.wallAIFile) fd.append('wallpaperPhoto', S.wallAIFile);
+
+  const r = await fetch('/api/generate-room', { method: 'POST', body: fd });
   const d = await r.json();
-  if (!d.success) throw new Error(d.error || 'Generation failed.');
-  return { imageUrl: d.imageUrl, label: `${body.roomType} — ${body.decorationStyle}`, sub: body.wallpaperDescription.substring(0, 70) };
+  if (!d.success) throw new Error(d.error || 'Genereren mislukt.');
+  return {
+    imageUrl: d.imageUrl,
+    label: `${document.getElementById('rtype').value} — ${document.getElementById('dstyle').value}`,
+    sub: (desc || 'Gegenereerd behang').substring(0, 70)
+  };
 }
 
-// ─── RESULT ─────────────────────────────────────────────
-function showResult({ imageUrl, label, sub }) {
-  const wrap = document.getElementById('rcWrap');
-  wrap.style.display = 'block';
-  wrap.innerHTML = `
+// ─── RESULTAAT TONEN ────────────────────────────────────
+function toonResultaat({ imageUrl, label, sub }) {
+  const w = document.getElementById('rcwrap');
+  w.style.display = 'block';
+  w.innerHTML = `
     <div class="rcard">
-      <div class="rimg-wrap">
-        <img src="${imageUrl}" alt="Mockup result" />
-        <div class="roverlay">
-          <a href="${imageUrl}" download="wallmockup.jpg" class="obtn gold">↓ Download</a>
-          <button class="obtn" onclick="generate()">↺ Regenerate</button>
+      <div class="rimgw">
+        <img src="${imageUrl}" alt="Mockup resultaat" />
+        <div class="rov">
+          <a href="${imageUrl}" download="wallmockup.jpg" class="obtn g">↓ Download</a>
+          <button class="obtn" onclick="generate()">↺ Opnieuw</button>
         </div>
       </div>
       <div class="rmeta">
         <div class="rinfo">
           <strong>${label}</strong>${sub || ''}
         </div>
-        <div class="raction">
+        <div class="racts">
           <a href="${imageUrl}" download="wallmockup.jpg" class="abtn p">↓ Download HD</a>
-          <button class="abtn" onclick="generate()">↺ New Version</button>
+          <button class="abtn" onclick="generate()">↺ Nieuwe Versie</button>
         </div>
       </div>
     </div>`;
 }
 
-// ─── HISTORY ────────────────────────────────────────────
-function saveHist({ imageUrl }) {
+// ─── GESCHIEDENIS ────────────────────────────────────────
+function slaOpInHist({ imageUrl }) {
   S.history.unshift({ imageUrl, t: Date.now() });
   S.history = S.history.slice(0, 9);
-  try { localStorage.setItem('wm_hist', JSON.stringify(S.history)); } catch {}
+  try { localStorage.setItem('wm3', JSON.stringify(S.history)); } catch {}
   renderHist();
 }
 
 function renderHist() {
-  const sec = document.getElementById('histSec');
+  const sec = document.getElementById('histsec');
   if (!S.history.length) { sec.style.display = 'none'; return; }
   sec.style.display = 'block';
-  document.getElementById('histGrid').innerHTML = S.history.map(h => `
-    <div class="hitem" onclick="showPrev('${h.imageUrl}')">
-      <img src="${h.imageUrl}" alt="prev" loading="lazy" />
+  document.getElementById('hgrid').innerHTML = S.history.map(h => `
+    <div class="hitem" onclick="toonVorig('${h.imageUrl}')">
+      <img src="${h.imageUrl}" alt="vorig" loading="lazy" />
     </div>`).join('');
 }
 
-function showPrev(url) {
+function toonVorig(url) {
   document.getElementById('ph').style.display = 'none';
-  showResult({ imageUrl: url, label: 'Previous Generation', sub: '' });
+  toonResultaat({ imageUrl: url, label: 'Eerdere Generatie', sub: '' });
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function clearHist() {
   S.history = [];
-  try { localStorage.removeItem('wm_hist'); } catch {}
+  try { localStorage.removeItem('wm3'); } catch {}
   renderHist();
 }
 
-// ─── ERRORS ─────────────────────────────────────────────
-function showErr(msg) {
-  const b = document.getElementById('errBox');
-  document.getElementById('errMsg').textContent = msg;
-  b.style.display = 'flex';
+// ─── FOUTEN ─────────────────────────────────────────────
+function toonFout(msg) {
+  document.getElementById('errmsg').textContent = msg;
+  document.getElementById('err').style.display = 'flex';
 }
-function hideErr() { document.getElementById('errBox').style.display = 'none'; }
+function verbergFout() {
+  document.getElementById('err').style.display = 'none';
+}
 </script>
 </body>
 </html>

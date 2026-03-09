@@ -1,12 +1,11 @@
 require('dotenv').config();
 const express = require('express');
-const multer = require('multer');
-const OpenAI = require('openai');
-const path = require('path');
-const cors = require('cors');
-const fs = require('fs');
+const multer  = require('multer');
+const OpenAI  = require('openai');
+const path    = require('path');
+const cors    = require('cors');
 
-const app = express();
+const app  = express();
 const PORT = process.env.PORT || 3000;
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -25,25 +24,61 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ─── HELPER: buffer → base64 data URL ──────────────────────────────────────────
+// ─── HELPER ────────────────────────────────────────────────
 function toDataURL(buffer, mime) {
   return `data:${mime};base64,${buffer.toString('base64')}`;
 }
 
-// ─── ROUTE 1: AI-only room (no uploaded room photo) ────────────────────────────
-app.post('/api/generate-room', async (req, res) => {
+// ═══════════════════════════════════════════════════════════
+// ROUTE 1 — AI kamer genereren (geen eigen kamer foto nodig)
+// ═══════════════════════════════════════════════════════════
+app.post('/api/generate-room', upload.fields([
+  { name: 'wallpaperPhoto', maxCount: 1 }
+]), async (req, res) => {
   try {
     const { wallpaperDescription, designType, roomType, decorationStyle, wallArchitecture, viewMode } = req.body;
+    const wallFile = req.files?.wallpaperPhoto?.[0];
+
+    let wallDesc = wallpaperDescription || '';
+
+    // Analyseer behang foto als die er is
+    if (wallFile) {
+      const wallDataURL = toDataURL(wallFile.buffer, wallFile.mimetype);
+      const analyse = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image_url', image_url: { url: wallDataURL } },
+            {
+              type: 'text',
+              text: `Beschrijf dit behang/afbeelding in EXTREME detail voor een AI image generator.
+Beschrijf: alle kleuren exact, het patroon, de motieven, stijl, compositie, textuur, achtergrondkleur.
+Wees ZO specifiek dat de AI exact hetzelfde op een muur kan nabootsen. Alleen de beschrijving, geen inleiding.`
+            }
+          ]
+        }],
+        max_tokens: 600
+      });
+      wallDesc = analyse.choices[0].message.content;
+    }
 
     const prompt = `
-Photorealistic interior design photo of a ${roomType || 'Living Room'}.
-Decoration style: ${decorationStyle || 'Modern'}.
-Wall architecture: ${wallArchitecture || 'Plain Wall'}.
-The main wall is covered with this wallpaper: ${wallpaperDescription || 'elegant abstract pattern'}.
-${designType === 'mural' ? 'The wallpaper is a single large mural piece.' : 'The wallpaper has a repeating seamless pattern.'}
-View: ${viewMode === 'wide' ? 'wide angle showing full room' : 'styled close-up of wall detail'}.
-Professional interior photography, perfect lighting, magazine quality, 8K resolution.
-The wallpaper must be clearly visible and dominant on the wall — do not change the room layout.
+Professionele interieur fotografie van een ${roomType || 'woonkamer'}.
+Decoratiestijl: ${decorationStyle || 'Modern'}.
+Wandarchitectuur: ${wallArchitecture || 'Rechte vlakke muur'}.
+
+De HOOFDMUUR is volledig bedekt met dit behang (100% zichtbaar, vlak, rechthoekig van voren gezien):
+${wallDesc || 'elegant decoratief herhalend patroon'}
+
+${designType === 'mural'
+  ? 'Het behang is één grote muurprint — het volledige beeld is zichtbaar van rand tot rand.'
+  : 'Het behang is een herhalend naadloos patroon dat de hele muur bedekt.'}
+
+Weergave: ${viewMode === 'wide' ? 'groothoek totaaloverzicht van de kamer' : 'gestileerde close-up van de muur'}.
+
+VERPLICHT: de muur is PLAT en FRONTAAL zichtbaar — GEEN diagonale hoeken of driehoekige perspectiefvervormingen.
+Het behang bedekt de muur van rand tot rand, 100% zichtbaar. Fotorealistisch, magazine kwaliteit.
     `.trim();
 
     const response = await openai.images.generate({
@@ -57,32 +92,37 @@ The wallpaper must be clearly visible and dominant on the wall — do not change
 
     res.json({ success: true, imageUrl: response.data[0].url });
   } catch (err) {
-    console.error('generate-room error:', err);
+    console.error('generate-room fout:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// ─── ROUTE 2: Apply wallpaper onto uploaded room photo ─────────────────────────
-// This uses gpt-image-1 edit with the room as base image and a precise prompt
-// to place the wallpaper onto the wall — keeping everything else identical.
+// ═══════════════════════════════════════════════════════════
+// ROUTE 2 — Behang op jouw eigen kamer foto plaatsen
+//
+// AANPAK (3 stappen):
+// 1. GPT-4o analyseert de kamer foto → gedetailleerde beschrijving
+// 2. GPT-4o analyseert de behang foto → pixel-perfecte beschrijving
+// 3. DALL-E 3 genereert de kamer opnieuw met jouw behang op de muur
+// ═══════════════════════════════════════════════════════════
 app.post('/api/apply-wallpaper', upload.fields([
-  { name: 'roomPhoto', maxCount: 1 },
+  { name: 'roomPhoto',      maxCount: 1 },
   { name: 'wallpaperPhoto', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const { wallpaperDescription, designType, decorationStyle } = req.body;
+    const { wallpaperDescription, designType } = req.body;
 
     const roomFile = req.files?.roomPhoto?.[0];
     const wallFile = req.files?.wallpaperPhoto?.[0];
 
     if (!roomFile) {
-      return res.status(400).json({ success: false, error: 'Room photo is required.' });
+      return res.status(400).json({ success: false, error: 'Kamer foto is verplicht.' });
     }
 
-    // ── Step 1: Analyze the room with GPT-4o Vision ──────────────────────────
     const roomDataURL = toDataURL(roomFile.buffer, roomFile.mimetype);
 
-    const analysisResp = await openai.chat.completions.create({
+    // ── STAP 1: Kamer analyseren ──────────────────────────
+    const kamerAnalyse = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [{
         role: 'user',
@@ -90,30 +130,34 @@ app.post('/api/apply-wallpaper', upload.fields([
           { type: 'image_url', image_url: { url: roomDataURL } },
           {
             type: 'text',
-            text: `Analyseer deze kamer foto zorgvuldig en beschrijf precies:
-1. Type kamer (woonkamer, slaapkamer, kinderkamer, etc.)
-2. De GROOTSTE VLAKKE FRONTALE MUUR — kleur, afmetingen, wat erop staat
-3. Alle meubels met exacte posities
-4. Belichting en kleurpalet
-5. Vloermateriaal
-6. Camerahoek en perspectief
+            text: `Analyseer deze kamer foto HEEL precies. Geef een gedetailleerde beschrijving van:
 
-Identificeer de beste muur voor behang: bij voorkeur een RECHTE VLAKKE MUUR die frontaal zichtbaar is — geen schuine hoekweergaves.
-Wees zeer precies zodat ik exact dezelfde kamer kan nabootsen.`
+1. KAMER TYPE (woonkamer, slaapkamer, kinderkamer, etc.)
+2. VLOER — materiaal, kleur, patroon
+3. PLAFOND — hoogte, kleur, verlichting
+4. ALLE MEUBELS — elk meubel, exacte positie, kleur, materiaal
+5. RAMEN & DEUREN — positie en grootte
+6. BELICHTING — lichtbronnen, sfeer, schaduwen
+7. KLEURPALET — welke kleuren domineren
+8. CAMERAHOEK — van welke positie is gefotografeerd
+9. DE HOOFDMUUR — kleur, oppervlak, wat erop staat
+
+Wees UITERST gedetailleerd — ik wil exact dezelfde kamer nabootsen maar met ander behang op de hoofdmuur.`
           }
         ]
       }],
-      max_tokens: 800
+      max_tokens: 1000
     });
 
-    const roomDesc = analysisResp.choices[0].message.content;
+    const kamerbeschrijving = kamerAnalyse.choices[0].message.content;
 
-    // ── Step 2: Build the edit prompt ────────────────────────────────────────
-    let wallpaperVisual = wallpaperDescription || 'elegant decorative wallpaper pattern';
+    // ── STAP 2: Behang analyseren ─────────────────────────
+    let behangBeschrijving = wallpaperDescription || '';
 
     if (wallFile) {
       const wallDataURL = toDataURL(wallFile.buffer, wallFile.mimetype);
-      const wallAnalysis = await openai.chat.completions.create({
+
+      const behangAnalyse = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [{
           role: 'user',
@@ -121,42 +165,65 @@ Wees zeer precies zodat ik exact dezelfde kamer kan nabootsen.`
             { type: 'image_url', image_url: { url: wallDataURL } },
             {
               type: 'text',
-              text: 'Beschrijf dit behang ontwerp in extreme detail: de exacte kleuren, het patroon, motieven, stijl, textuur, herhaalstructuur. Wees zeer specifiek zodat het exact gereproduceerd kan worden.'
+              text: `Dit is een afbeelding/behang die iemand op zijn muur wil hebben als muurbehang.
+
+Beschrijf dit UITERST gedetailleerd zodat een AI image generator het EXACT kan reproduceren op een muur:
+
+- WAT IS ER TE ZIEN? Beschrijf elk element, figuur, object (bijv: "een grote tijger die van links naar rechts loopt, fotorealistisch")
+- EXACTE KLEUREN — gebruik precieze kleurbenamingen (bijv: "oranje en zwarte strepen op een tijger, bruine aarden achtergrond")
+- ACHTERGROND — kleur en textuur
+- STIJL — fotorealistisch / illustratie / abstract / aquarel / etc.
+- COMPOSITIE — hoe zijn de elementen verdeeld? Centrum? Links/rechts?
+- PATROON — herhaalt het zich of is het één enkel beeld?
+
+Beschrijf zo gedetailleerd dat de AI generator EXACT dit beeld op de muur maakt.`
             }
           ]
         }],
-        max_tokens: 500
+        max_tokens: 800
       });
-      wallpaperVisual = wallAnalysis.choices[0].message.content;
+
+      behangBeschrijving = behangAnalyse.choices[0].message.content;
     }
 
-    // ── Step 3: Generate the final image ─────────────────────────────────────
-    const finalPrompt = `
-Photorealistic interior room photo.
+    // ── STAP 3: Uiteindelijke kamer genereren ─────────────
+    const eindPrompt = `
+FOTOREALISTISCH INTERIEUR — PROFESSIONELE INTERIEUR FOTOGRAFIE
 
-ROOM (keep 100% identical):
-${roomDesc}
+REPRODUCEER EXACT DEZE KAMER (alles blijft hetzelfde):
+${kamerbeschrijving}
 
-WALL CHANGE — THIS IS THE ONLY THING THAT CHANGES:
-The main wall must be shown as a FLAT, STRAIGHT, RECTANGULAR wall viewed from the FRONT.
-NO diagonal angles, NO corner views, NO triangular perspective cuts.
-The wall must fill a large portion of the image as a perfect rectangle.
+═════════════════════════════════════════════
+HET ENIGE DAT VERANDERT: DE HOOFDMUUR
+═════════════════════════════════════════════
 
-Cover this flat rectangular wall COMPLETELY with the following wallpaper:
-${wallpaperVisual}
-${designType === 'mural' ? 'Applied as one single full-wall mural — the entire pattern is 100% visible.' : 'Applied as a seamlessly repeating pattern — the full pattern is 100% visible across the entire wall.'}
+BEHANG DAT OP DE MUUR MOET KOMEN:
+${behangBeschrijving || 'elegant decoratief patroon'}
 
-CRITICAL:
-- The wallpaper must be 100% visible, fully covering the wall from edge to edge
-- No partial views, no cut-off patterns, no diagonal cuts
-- The wall is shown straight/frontal — flat rectangle, not angled
-- Keep all furniture, floor, ceiling, lighting IDENTICAL
-- Professional interior photography, perfect lighting
+REGELS VOOR HET BEHANG OP DE MUUR:
+1. Het behang bedekt de hoofdmuur VOLLEDIG van rand tot rand, van vloer tot plafond
+2. De muur is RECHT en FRONTAAL zichtbaar als een PERFECT RECHTHOEKIG VLAK
+3. GEEN diagonale hoeken, GEEN driehoekige perspectiefvervormingen, GEEN schuine weergave
+4. Het behang is 100% zichtbaar — het volledige patroon/beeld is te zien
+5. ${designType === 'mural'
+  ? 'Het is een grote MUURPRINT — één enkel beeld dat de hele muur vult, volledig zichtbaar'
+  : 'Het is een HERHALEND PATROON dat naadloos de hele muur bedekt'}
+6. Correcte belichting: het behang heeft dezelfde lichtinval als de rest van de kamer
+7. Fotorealistisch — het ziet eruit als echt aangebracht muurbehang
+
+WAT GELIJK BLIJFT:
+- Alle meubels (zelfde positie, kleur, materiaal)
+- Vloer (zelfde materiaal en kleur)
+- Plafond (zelfde kleur en verlichting)
+- Ramen en deuren (zelfde positie)
+- Algemene belichting en sfeer van de kamer
+
+KWALITEIT: Ultra-fotorealistisch, professionele interieur fotografie, 8K kwaliteit.
     `.trim();
 
     const response = await openai.images.generate({
       model: 'dall-e-3',
-      prompt: finalPrompt,
+      prompt: eindPrompt,
       n: 1,
       size: '1792x1024',
       quality: 'hd',
@@ -165,17 +232,15 @@ CRITICAL:
 
     res.json({
       success: true,
-      imageUrl: response.data[0].url,
-      roomAnalysis: roomDesc,
-      wallpaperAnalysis: wallpaperVisual
+      imageUrl: response.data[0].url
     });
 
   } catch (err) {
-    console.error('apply-wallpaper error:', err);
+    console.error('apply-wallpaper fout:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🎨 WallMockup AI → http://localhost:${PORT}\n`);
+  console.log(`\n🎨 WallMockup AI draait op → http://localhost:${PORT}\n`);
 });
