@@ -8,23 +8,21 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
-  /* ── RESET & BASE ─────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:        #0a0a0b;
-    --surface:   #111113;
-    --surface2:  #18181c;
-    --border:    rgba(255,255,255,0.07);
-    --border2:   rgba(255,255,255,0.13);
-    --gold:      #c9a96e;
-    --gold2:     #e8c990;
-    --text:      #e8e6e0;
-    --muted:     #7a7870;
-    --accent:    #c9a96e;
-    --red:       #e05252;
-    --radius:    12px;
-    --radius2:   20px;
+    --bg:       #0a0a0b;
+    --surface:  #111113;
+    --surface2: #18181c;
+    --border:   rgba(255,255,255,0.07);
+    --border2:  rgba(255,255,255,0.13);
+    --gold:     #c9a96e;
+    --gold2:    #e8c990;
+    --text:     #e8e6e0;
+    --muted:    #7a7870;
+    --red:      #e05252;
+    --radius:   12px;
+    --radius2:  20px;
   }
 
   html { scroll-behavior: smooth; }
@@ -38,1326 +36,788 @@
     overflow-x: hidden;
   }
 
-  /* ── GRAIN OVERLAY ───────────────────────────── */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 1000;
     opacity: 0.4;
   }
 
-  /* ── NAV ─────────────────────────────────────── */
+  /* ── NAV ── */
   nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    height: 68px;
-    background: rgba(10,10,11,0.85);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 68px;
+    background: rgba(10,10,11,0.9);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
   }
-
   .nav-logo {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: var(--gold);
-    text-decoration: none;
+    font-size: 22px; font-weight: 600; letter-spacing: 0.05em;
+    color: var(--gold); text-decoration: none;
   }
-
   .nav-logo span { color: var(--text); font-weight: 300; }
-
   .nav-tag {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border: 1px solid var(--border2);
-    padding: 4px 12px;
-    border-radius: 20px;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--border2);
+    padding: 4px 12px; border-radius: 20px;
   }
 
-  /* ── HERO ─────────────────────────────────────── */
+  /* ── HERO ── */
   .hero {
-    padding: 140px 40px 60px;
-    text-align: center;
-    max-width: 700px;
-    margin: 0 auto;
+    padding: 130px 40px 50px;
+    text-align: center; max-width: 680px; margin: 0 auto;
   }
-
   .hero-eyebrow {
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 24px;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.2s forwards;
+    font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
   }
-
   .hero h1 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(42px, 6vw, 72px);
-    font-weight: 300;
-    line-height: 1.1;
-    color: var(--text);
-    margin-bottom: 20px;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.35s forwards;
+    font-size: clamp(38px, 5.5vw, 66px); font-weight: 300; line-height: 1.1;
+    margin-bottom: 18px;
+    opacity: 0; animation: fadeUp 0.8s 0.35s forwards;
   }
-
-  .hero h1 em {
-    font-style: italic;
-    color: var(--gold);
-  }
-
+  .hero h1 em { font-style: italic; color: var(--gold); }
   .hero p {
-    font-size: 15px;
-    color: var(--muted);
-    line-height: 1.7;
-    max-width: 480px;
-    margin: 0 auto 40px;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.5s forwards;
+    font-size: 14px; color: var(--muted); line-height: 1.7;
+    max-width: 440px; margin: 0 auto 32px;
+    opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
   }
-
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(18px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+  .gold-line { width: 36px; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); margin: 0 auto; }
 
-  /* ── MAIN LAYOUT ─────────────────────────────── */
-  .app-container {
-    max-width: 1280px;
-    margin: 0 auto;
+  /* ── LAYOUT ── */
+  .app {
+    max-width: 1300px; margin: 0 auto;
     padding: 0 40px 80px;
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 24px;
-    align-items: start;
+    display: grid; grid-template-columns: 400px 1fr;
+    gap: 24px; align-items: start;
   }
 
-  /* ── PANEL (left sidebar) ───────────────────── */
+  /* ── PANEL ── */
   .panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius2);
-    overflow: hidden;
-    position: sticky;
-    top: 88px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius2); overflow: hidden;
+    position: sticky; top: 88px;
   }
+  .ps { padding: 24px 26px; border-bottom: 1px solid var(--border); }
+  .ps:last-child { border-bottom: none; }
 
-  .panel-section {
-    padding: 28px;
-    border-bottom: 1px solid var(--border);
+  .stitle {
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
   }
+  .stitle::after { content: ''; flex: 1; height: 1px; background: var(--border2); }
 
-  .panel-section:last-child { border-bottom: none; }
-
-  .section-title {
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  /* ── MODE SWITCHER (big tabs at top) ── */
+  .mode-switch {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 0;
   }
-
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border2);
+  .mode-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 12px;
+    cursor: pointer; transition: all 0.25s; text-align: center;
   }
-
-  /* ── WALLPAPER UPLOAD AREA ───────────────────── */
-  .upload-zone {
-    border: 2px dashed var(--border2);
-    border-radius: var(--radius);
-    padding: 28px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-    background: var(--surface2);
-  }
-
-  .upload-zone:hover {
-    border-color: var(--gold);
-    background: rgba(201,169,110,0.05);
-  }
-
-  .upload-zone.has-image {
-    border-style: solid;
-    border-color: var(--gold);
-    padding: 0;
-  }
-
-  .upload-zone img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: calc(var(--radius) - 2px);
-    display: block;
-  }
-
-  .upload-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  .upload-icon {
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--border2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 12px;
-    color: var(--muted);
-    font-size: 18px;
-  }
-
-  .upload-label {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-
-  .upload-label strong {
-    color: var(--gold);
-    font-weight: 400;
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  .required-badge {
-    display: inline-block;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--red);
-    border: 1px solid rgba(224,82,82,0.3);
-    padding: 2px 8px;
-    border-radius: 10px;
-    margin-bottom: 12px;
-  }
-
-  /* ── TOGGLE TABS ─────────────────────────────── */
-  .tab-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 0;
-  }
-
-  .tab-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 10px;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 400;
-    cursor: pointer;
-    transition: all 0.25s;
-    text-align: center;
-    line-height: 1.3;
-  }
-
-  .tab-btn:hover { border-color: var(--border2); color: var(--text); }
-
-  .tab-btn.active {
-    background: rgba(201,169,110,0.12);
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-
-  /* ── FORM ELEMENTS ───────────────────────────── */
-  .field { margin-bottom: 16px; }
-
-  .field label {
-    display: block;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-
-  .field input,
-  .field select,
-  .field textarea {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 11px 14px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 300;
-    transition: border-color 0.25s;
-    appearance: none;
-    outline: none;
-  }
-
-  .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
-    border-color: var(--gold);
-    background: rgba(201,169,110,0.04);
-  }
-
-  .field select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7870' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 36px;
-    cursor: pointer;
-  }
-
-  .field select option {
-    background: #18181c;
-    color: #e8e6e0;
-  }
-
-  .field textarea {
-    resize: vertical;
-    min-height: 90px;
-    line-height: 1.5;
-  }
-
-  /* ── VIEW MODE ───────────────────────────────── */
-  .view-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .view-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 12px;
-    cursor: pointer;
-    transition: all 0.25s;
-    text-align: center;
-  }
-
-  .view-card:hover { border-color: var(--border2); }
-
-  .view-card.active {
+  .mode-card:hover { border-color: var(--border2); }
+  .mode-card.active {
     background: rgba(201,169,110,0.1);
     border-color: var(--gold);
   }
+  .mode-card-icon { font-size: 22px; margin-bottom: 6px; }
+  .mode-card-title { font-size: 13px; color: var(--text); margin-bottom: 3px; }
+  .mode-card-sub { font-size: 10px; color: var(--muted); line-height: 1.4; }
+  .mode-card.active .mode-card-title { color: var(--gold); }
 
-  .view-card-icon {
-    font-size: 20px;
-    margin-bottom: 6px;
+  /* ── UPLOAD ZONES ── */
+  .upload-pair {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 4px;
+  }
+  .upload-single { display: block; }
+
+  .uzone {
+    border: 2px dashed var(--border2); border-radius: var(--radius);
+    padding: 20px 12px; text-align: center; cursor: pointer;
+    transition: all 0.3s; position: relative; overflow: hidden;
+    background: var(--surface2); min-height: 120px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .uzone:hover { border-color: var(--gold); background: rgba(201,169,110,0.04); }
+  .uzone.filled { border-style: solid; border-color: var(--gold); padding: 0; min-height: 120px; }
+  .uzone.filled img { width: 100%; height: 120px; object-fit: cover; border-radius: calc(var(--radius) - 2px); display: block; }
+  .uzone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .uzone-icon { font-size: 20px; margin-bottom: 6px; color: var(--muted); }
+  .uzone-label { font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .uzone-label strong { display: block; color: var(--gold); font-weight: 400; font-size: 12px; margin-bottom: 2px; }
+
+  /* badge */
+  .badge-req {
+    display: inline-block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--red); border: 1px solid rgba(224,82,82,0.3);
+    padding: 2px 8px; border-radius: 10px; margin-bottom: 10px;
+  }
+  .badge-opt {
+    display: inline-block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--border2);
+    padding: 2px 8px; border-radius: 10px; margin-bottom: 10px;
   }
 
-  .view-card-title {
-    font-size: 12px;
-    color: var(--text);
-    margin-bottom: 3px;
+  /* ── FORM ── */
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 7px;
   }
-
-  .view-card-sub {
-    font-size: 10px;
-    color: var(--muted);
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 13px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300;
+    transition: border-color 0.25s; appearance: none; outline: none;
   }
-
-  /* ── RESOLUTION ──────────────────────────────── */
-  .res-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--gold); background: rgba(201,169,110,0.03);
   }
-
-  .res-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.25s;
-    text-align: center;
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7870' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 13px center;
+    padding-right: 34px; cursor: pointer;
   }
+  .field select option { background: #18181c; color: #e8e6e0; }
+  .field textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
 
-  .res-btn.active {
-    background: rgba(201,169,110,0.12);
-    border-color: var(--gold);
-    color: var(--gold);
+  /* ── CHIPS ── */
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+  .chip {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 11px; font-size: 11px;
+    color: var(--muted); cursor: pointer; transition: all 0.2s;
   }
+  .chip:hover { border-color: var(--gold); color: var(--gold); }
 
-  /* ── ROOM PHOTO SECTION ──────────────────────── */
-  .mode-tabs {
-    display: flex;
-    gap: 0;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 4px;
-    margin-bottom: 20px;
+  /* ── DESIGN TYPE ── */
+  .dtype-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .dtype-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 11px 10px;
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 12px; cursor: pointer; transition: all 0.25s; text-align: center; line-height: 1.3;
   }
+  .dtype-btn:hover { border-color: var(--border2); color: var(--text); }
+  .dtype-btn.active { background: rgba(201,169,110,0.12); border-color: var(--gold); color: var(--gold); }
 
-  .mode-tab {
-    flex: 1;
-    padding: 9px 14px;
-    border: none;
-    background: transparent;
-    border-radius: 8px;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
+  /* ── VIEW + ROOM SELECTORS (AI mode only) ── */
+  .view-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .view-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 13px 10px;
+    cursor: pointer; transition: all 0.25s; text-align: center;
   }
+  .view-card:hover { border-color: var(--border2); }
+  .view-card.active { background: rgba(201,169,110,0.1); border-color: var(--gold); }
+  .view-card-icon { font-size: 18px; margin-bottom: 5px; }
+  .view-card-title { font-size: 12px; color: var(--text); margin-bottom: 2px; }
+  .view-card-sub { font-size: 10px; color: var(--muted); }
+  .view-card.active .view-card-title { color: var(--gold); }
 
-  .mode-tab.active {
-    background: var(--surface);
-    color: var(--gold);
-    border: 1px solid var(--border2);
-  }
-
-  /* ── GENERATE BUTTON ─────────────────────────── */
-  .generate-btn {
-    width: 100%;
-    padding: 16px 24px;
+  /* ── GENERATE BUTTON ── */
+  .gen-btn {
+    width: 100%; padding: 15px 20px;
     background: linear-gradient(135deg, #c9a96e, #a07840);
-    border: none;
-    border-radius: var(--radius);
-    color: #0a0a0b;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
+    border: none; border-radius: var(--radius);
+    color: #0a0a0b; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; cursor: pointer; transition: all 0.3s;
+    position: relative; overflow: hidden;
   }
-
-  .generate-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+  .gen-btn::before {
+    content: ''; position: absolute; inset: 0;
     background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .gen-btn:hover::before { opacity: 1; }
+  .gen-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,169,110,0.3); }
+  .gen-btn:active { transform: translateY(0); }
+  .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ── ERROR ── */
+  .error-box {
+    background: rgba(224,82,82,0.08); border: 1px solid rgba(224,82,82,0.25);
+    border-radius: var(--radius); padding: 14px 18px;
+    color: #e08888; font-size: 13px; line-height: 1.6;
+    display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px;
   }
 
-  .generate-btn:hover::before { opacity: 1; }
-  .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(201,169,110,0.3); }
-  .generate-btn:active { transform: translateY(0); }
-  .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  /* ── RESULT AREA ── */
+  .result-area { min-height: 500px; }
 
-  .btn-credits {
-    font-size: 10px;
-    opacity: 0.7;
-    margin-left: 6px;
-    letter-spacing: 0;
-    text-transform: none;
+  .placeholder {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius2); height: 520px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; text-align: center; padding: 40px;
   }
-
-  /* ── RESULT AREA (right) ─────────────────────── */
-  .result-area {
-    min-height: 500px;
+  .ph-icon { font-size: 44px; opacity: 0.25; }
+  .ph-title {
+    font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300;
+    color: var(--text); opacity: 0.35;
   }
+  .ph-sub { font-size: 13px; color: var(--muted); opacity: 0.5; max-width: 280px; line-height: 1.6; }
 
-  .result-placeholder {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius2);
-    height: 520px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    color: var(--muted);
-    text-align: center;
-    padding: 40px;
+  /* ── LOADING ── */
+  .loading {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius2); height: 520px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 22px;
   }
-
-  .placeholder-icon {
-    font-size: 48px;
-    opacity: 0.3;
-  }
-
-  .placeholder-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 28px;
-    font-weight: 300;
-    color: var(--text);
-    opacity: 0.4;
-  }
-
-  .placeholder-sub {
-    font-size: 13px;
-    opacity: 0.5;
-    max-width: 300px;
-    line-height: 1.6;
-  }
-
-  /* ── LOADING ─────────────────────────────────── */
-  .loading-state {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius2);
-    height: 520px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-  }
-
-  .loading-spinner {
-    width: 48px;
-    height: 48px;
-    border: 2px solid var(--border2);
-    border-top-color: var(--gold);
-    border-radius: 50%;
+  .spinner {
+    width: 46px; height: 46px; border: 2px solid var(--border2);
+    border-top-color: var(--gold); border-radius: 50%;
     animation: spin 1s linear infinite;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  .loading-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-style: italic;
-    color: var(--muted);
-    text-align: center;
+  .loading-title {
+    font-family: 'Cormorant Garamond', serif; font-size: 21px; font-style: italic;
+    color: var(--muted); text-align: center;
   }
+  .loading-steps { display: flex; flex-direction: column; gap: 7px; text-align: center; }
+  .lstep { font-size: 12px; color: var(--muted); opacity: 0; transition: opacity 0.5s; }
+  .lstep.show { opacity: 0.6; }
 
-  .loading-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    text-align: center;
-  }
-
-  .loading-step {
-    font-size: 12px;
-    color: var(--muted);
-    opacity: 0;
-    animation: stepIn 0.5s forwards;
-  }
-
-  .loading-step.visible { opacity: 0.6; }
-
-  @keyframes stepIn {
-    from { opacity: 0; transform: translateX(-10px); }
-    to   { opacity: 0.6; transform: translateX(0); }
-  }
-
-  /* ── RESULT CARD ─────────────────────────────── */
-  .result-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius2);
-    overflow: hidden;
+  /* ── RESULT CARD ── */
+  .rcard {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius2); overflow: hidden;
     animation: fadeIn 0.6s ease;
   }
-
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(16px); }
+    from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
-  .result-image-wrap {
-    position: relative;
-    overflow: hidden;
+  .rimg-wrap { position: relative; overflow: hidden; }
+  .rimg-wrap img { width: 100%; display: block; transition: transform 0.5s ease; }
+  .rimg-wrap:hover img { transform: scale(1.015); }
+  .roverlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%);
+    opacity: 0; transition: opacity 0.3s;
+    display: flex; align-items: flex-end; padding: 22px; gap: 10px;
   }
-
-  .result-image-wrap img {
-    width: 100%;
-    display: block;
-    transition: transform 0.5s ease;
+  .rimg-wrap:hover .roverlay { opacity: 1; }
+  .obtn {
+    background: rgba(255,255,255,0.14); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+    padding: 8px 16px; color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 12px; cursor: pointer; transition: all 0.2s;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
   }
-
-  .result-image-wrap:hover img { transform: scale(1.02); }
-
-  .result-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    display: flex;
-    align-items: flex-end;
-    padding: 24px;
-    gap: 12px;
+  .obtn:hover { background: rgba(255,255,255,0.22); }
+  .obtn.gold { background: rgba(201,169,110,0.28); border-color: rgba(201,169,110,0.5); color: var(--gold2); }
+  .rmeta {
+    padding: 18px 22px; display: flex; justify-content: space-between;
+    align-items: center; border-top: 1px solid var(--border);
   }
-
-  .result-image-wrap:hover .result-overlay { opacity: 1; }
-
-  .overlay-btn {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 8px;
-    padding: 9px 18px;
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  .rinfo { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .rinfo strong { display: block; font-size: 14px; color: var(--text); font-weight: 400; margin-bottom: 2px; }
+  .raction { display: flex; gap: 9px; }
+  .abtn {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 8px 15px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer;
+    transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
   }
+  .abtn:hover { border-color: var(--gold); color: var(--gold); }
+  .abtn.p { background: rgba(201,169,110,0.12); border-color: var(--gold); color: var(--gold); }
 
-  .overlay-btn:hover { background: rgba(255,255,255,0.25); }
-
-  .overlay-btn.gold {
-    background: rgba(201,169,110,0.3);
-    border-color: rgba(201,169,110,0.5);
-    color: var(--gold2);
+  /* ── HISTORY ── */
+  .history { margin-top: 22px; }
+  .hist-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px; padding: 0 2px;
   }
-
-  .result-meta {
-    padding: 20px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--border);
+  .hist-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 300; }
+  .clr-btn {
+    font-size: 11px; color: var(--muted); background: none; border: none;
+    cursor: pointer; transition: color 0.2s; font-family: 'DM Sans', sans-serif;
   }
-
-  .result-info {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.6;
+  .clr-btn:hover { color: var(--red); }
+  .hist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; }
+  .hitem {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; cursor: pointer;
+    transition: all 0.25s; aspect-ratio: 16/9; position: relative;
   }
+  .hitem:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .hitem img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  .result-info strong {
-    display: block;
-    font-size: 14px;
-    color: var(--text);
-    font-weight: 400;
-    margin-bottom: 2px;
-  }
-
-  .result-actions {
-    display: flex;
-    gap: 10px;
-  }
-
-  .action-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 9px 16px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-  }
-
-  .action-btn:hover { border-color: var(--gold); color: var(--gold); }
-
-  .action-btn.primary {
-    background: rgba(201,169,110,0.12);
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-
-  /* ── HISTORY GRID ────────────────────────────── */
-  .history-section {
-    margin-top: 24px;
-  }
-
-  .history-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    padding: 0 4px;
-  }
-
-  .history-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    font-weight: 300;
-    color: var(--text);
-  }
-
-  .clear-btn {
-    font-size: 11px;
-    color: var(--muted);
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color 0.2s;
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .clear-btn:hover { color: var(--red); }
-
-  .history-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-
-  .history-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.25s;
-    aspect-ratio: 16/9;
-    position: relative;
-  }
-
-  .history-item:hover {
-    border-color: var(--gold);
-    transform: translateY(-2px);
-  }
-
-  .history-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* ── ERROR STATE ─────────────────────────────── */
-  .error-state {
-    background: rgba(224,82,82,0.08);
-    border: 1px solid rgba(224,82,82,0.25);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    color: #e08888;
-    font-size: 13px;
-    line-height: 1.6;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .error-icon { flex-shrink: 0; font-size: 16px; }
-
-  /* ── WALLPAPER DESCRIPTION AREA ──────────────── */
-  .desc-area {
-    position: relative;
-  }
-
-  .desc-suggestions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
-  }
-
-  .suggestion-chip {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 11px;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .suggestion-chip:hover {
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-
-  /* ── RESPONSIVE ──────────────────────────────── */
+  /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
-    .app-container {
-      grid-template-columns: 1fr;
-      padding: 0 20px 60px;
-    }
+    .app { grid-template-columns: 1fr; padding: 0 18px 60px; }
     .panel { position: static; }
-    nav { padding: 0 20px; }
-    .hero { padding: 120px 20px 40px; }
-    .history-grid { grid-template-columns: repeat(2, 1fr); }
+    nav { padding: 0 18px; }
+    .hero { padding: 110px 18px 40px; }
+    .hist-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
-  /* ── SCROLLBAR ───────────────────────────────── */
-  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-
-  /* ── SUBTLE DECORATIVE LINES ─────────────────── */
-  .gold-line {
-    width: 40px;
-    height: 1px;
-    background: linear-gradient(90deg, var(--gold), transparent);
-    margin: 0 auto;
-  }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a class="nav-logo" href="#">Wall<span>Mockup</span> <em style="font-style:italic;font-family:'Cormorant Garamond',serif;font-size:18px;">AI</em></a>
   <span class="nav-tag">Powered by OpenAI</span>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <p class="hero-eyebrow">AI Interior Visualization</p>
   <h1>See Your Wallpaper <em>Come to Life</em></h1>
-  <p>Upload your design, configure your space, and let AI render a photorealistic mockup of your wallpaper in any room.</p>
+  <p>Upload your room photo and wallpaper design — AI places it on your exact wall, keeping everything else identical.</p>
   <div class="gold-line"></div>
 </section>
 
-<!-- MAIN APP -->
-<div class="app-container">
+<div class="app">
 
-  <!-- ─── LEFT PANEL ─── -->
+  <!-- ─── PANEL ─── -->
   <aside class="panel">
 
-    <!-- Wallpaper Design -->
-    <div class="panel-section">
-      <div class="section-title">Wallpaper Design</div>
-      <span class="required-badge">Required</span>
-      <div class="upload-zone" id="wallpaperZone">
-        <input type="file" id="wallpaperInput" accept="image/*" onchange="handleWallpaperUpload(event)" />
-        <div class="upload-icon">+</div>
-        <div class="upload-label">
+    <!-- MODE SELECT -->
+    <div class="ps">
+      <div class="stitle">Generation Mode</div>
+      <div class="mode-switch">
+        <div class="mode-card active" id="modeCardUpload" onclick="setMode('upload')">
+          <div class="mode-card-icon">📷</div>
+          <div class="mode-card-title">My Room Photo</div>
+          <div class="mode-card-sub">Upload your room — AI applies wallpaper on your exact wall</div>
+        </div>
+        <div class="mode-card" id="modeCardAI" onclick="setMode('ai')">
+          <div class="mode-card-icon">✦</div>
+          <div class="mode-card-title">AI Generate Room</div>
+          <div class="mode-card-sub">AI creates a full room with your wallpaper</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPLOAD MODE: room + wallpaper photos -->
+    <div class="ps" id="uploadSection">
+      <div class="stitle">Upload Photos</div>
+
+      <!-- Room photo -->
+      <div style="margin-bottom:16px;">
+        <span class="badge-req">Required — Your Room</span>
+        <div class="uzone upload-single" id="roomZone">
+          <input type="file" id="roomInput" accept="image/*" onchange="handleUpload('room', event)" />
+          <div class="uzone-icon">🏠</div>
+          <div class="uzone-label">
+            <strong>Upload Room Photo</strong>
+            Your actual room, any angle
+          </div>
+        </div>
+      </div>
+
+      <!-- Wallpaper photo -->
+      <div>
+        <span class="badge-opt">Optional — Wallpaper Photo</span>
+        <div class="uzone upload-single" id="wallZone">
+          <input type="file" id="wallInput" accept="image/*" onchange="handleUpload('wall', event)" />
+          <div class="uzone-icon">🖼</div>
+          <div class="uzone-label">
+            <strong>Upload Wallpaper Design</strong>
+            Or describe it below
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI MODE: wallpaper photo only -->
+    <div class="ps" id="aiUploadSection" style="display:none;">
+      <div class="stitle">Wallpaper Design</div>
+      <span class="badge-opt">Optional — Photo</span>
+      <div class="uzone upload-single" id="wallZoneAI">
+        <input type="file" id="wallInputAI" accept="image/*" onchange="handleUpload('wallAI', event)" />
+        <div class="uzone-icon">🖼</div>
+        <div class="uzone-label">
           <strong>Upload Wallpaper Design</strong>
-          PNG, JPG, or SVG up to 20MB
+          Or describe it below
         </div>
       </div>
+    </div>
 
-      <!-- Design Type -->
+    <!-- WALLPAPER DESCRIPTION -->
+    <div class="ps">
+      <div class="stitle">Describe Wallpaper</div>
+      <div class="field">
+        <textarea id="wallDesc" placeholder="e.g. tropical botanical leaves, deep green and gold on cream background..."></textarea>
+      </div>
+      <div class="chips">
+        <span class="chip" onclick="addChip('Botanical floral')">Botanical floral</span>
+        <span class="chip" onclick="addChip('Geometric art deco')">Art deco</span>
+        <span class="chip" onclick="addChip('Abstract watercolor')">Watercolor</span>
+        <span class="chip" onclick="addChip('Marble texture')">Marble</span>
+        <span class="chip" onclick="addChip('Tropical leaves')">Tropical</span>
+        <span class="chip" onclick="addChip('Vintage damask')">Damask</span>
+      </div>
+
+      <!-- Design type -->
       <div style="margin-top:16px;">
-        <div class="tab-group">
-          <button class="tab-btn active" id="tab-repeating" onclick="setDesignType('repeating')">
-            Repeating Pattern
-          </button>
-          <button class="tab-btn" id="tab-mural" onclick="setDesignType('mural')">
-            Mural / Single-Piece Design
-          </button>
+        <label style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px;">Design Type</label>
+        <div class="dtype-group">
+          <button class="dtype-btn active" id="dt-rep" onclick="setDtype('repeating')">Repeating Pattern</button>
+          <button class="dtype-btn" id="dt-mur" onclick="setDtype('mural')">Mural / Single Piece</button>
         </div>
       </div>
-
-      <!-- Width -->
-      <div class="field" style="margin-top:16px;">
-        <label>Pattern Repeat Width</label>
-        <input type="number" id="patternWidth" value="24" min="1" max="200" placeholder="24" />
-      </div>
     </div>
 
-    <!-- Wallpaper Description -->
-    <div class="panel-section">
-      <div class="section-title">Describe Your Wallpaper</div>
-      <div class="field desc-area">
-        <textarea id="wallpaperDesc" placeholder="e.g. tropical botanical leaves in deep green and gold on cream background..."></textarea>
-      </div>
-      <div class="desc-suggestions">
-        <span class="suggestion-chip" onclick="addSuggestion('Botanical floral')">Botanical floral</span>
-        <span class="suggestion-chip" onclick="addSuggestion('Geometric art deco')">Geometric art deco</span>
-        <span class="suggestion-chip" onclick="addSuggestion('Abstract watercolor')">Abstract watercolor</span>
-        <span class="suggestion-chip" onclick="addSuggestion('Marble texture')">Marble texture</span>
-        <span class="suggestion-chip" onclick="addSuggestion('Tropical leaves')">Tropical leaves</span>
-        <span class="suggestion-chip" onclick="addSuggestion('Vintage damask')">Vintage damask</span>
-      </div>
-    </div>
+    <!-- AI MODE OPTIONS -->
+    <div class="ps" id="aiOptions" style="display:none;">
+      <div class="stitle">Room Settings</div>
 
-    <!-- Space Selection -->
-    <div class="panel-section">
-      <div class="section-title">Space Selection</div>
-
-      <!-- AI vs Upload tabs -->
-      <div class="mode-tabs">
-        <button class="mode-tab active" id="modeAI" onclick="setSpaceMode('ai')">
-          ✦ AI Room Generate
-        </button>
-        <button class="mode-tab" id="modeUpload" onclick="setSpaceMode('upload')">
-          ↑ Upload Room Photo
-        </button>
-      </div>
-
-      <!-- AI mode options -->
-      <div id="aiModeOptions">
-        <!-- View Mode -->
-        <div class="field">
-          <label>View Mode</label>
-          <div class="view-grid">
-            <div class="view-card active" id="view-wide" onclick="setViewMode('wide')">
-              <div class="view-card-icon">⬜</div>
-              <div class="view-card-title">Wide Angle</div>
-              <div class="view-card-sub">Room & Space</div>
-            </div>
-            <div class="view-card" id="view-close" onclick="setViewMode('close')">
-              <div class="view-card-icon">🔍</div>
-              <div class="view-card-title">Styled Close-up</div>
-              <div class="view-card-sub">Product Focused</div>
-            </div>
+      <div class="field">
+        <label>View Mode</label>
+        <div class="view-grid">
+          <div class="view-card active" id="vw-wide" onclick="setView('wide')">
+            <div class="view-card-icon">⬜</div>
+            <div class="view-card-title">Wide Angle</div>
+            <div class="view-card-sub">Full room</div>
           </div>
-        </div>
-
-        <!-- Room Type -->
-        <div class="field">
-          <label>Room Type</label>
-          <select id="roomType">
-            <optgroup label="Residential">
-              <option>Living Room</option>
-              <option>Bedroom</option>
-              <option>Dining Room</option>
-              <option>Kids Room</option>
-              <option>Bathroom</option>
-              <option>Entryway</option>
-              <option>Home Office</option>
-            </optgroup>
-            <optgroup label="Commercial">
-              <option>Cafe</option>
-              <option>Restaurant</option>
-              <option>Hotel Lobby</option>
-              <option>Boutique Shop</option>
-              <option>Co-Working Space</option>
-              <option>Gym / Studio</option>
-            </optgroup>
-          </select>
-        </div>
-
-        <!-- Decoration Style -->
-        <div class="field">
-          <label>Decoration Style</label>
-          <select id="decorStyle">
-            <option>Auto (Harmonious)</option>
-            <option>Modern</option>
-            <option>Bohemian</option>
-            <option>Scandinavian</option>
-            <option>Industrial</option>
-            <option>Classic / Traditional</option>
-            <option>Luxury</option>
-            <option>Minimalist</option>
-            <option>Art Deco</option>
-            <option>Biophilic (Natural)</option>
-            <option>Retro 70s</option>
-            <option>Rustic</option>
-          </select>
-        </div>
-
-        <!-- Wall Architecture -->
-        <div class="field">
-          <label>Wall Architecture</label>
-          <select id="wallArch">
-            <option>Plain Wall</option>
-            <option>Corner View</option>
-            <option>Window (Center)</option>
-            <option>Window (Side)</option>
-            <option>With Door</option>
-            <option>Archway</option>
-            <option>Wainscoting</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Upload mode options -->
-      <div id="uploadModeOptions" style="display:none;">
-        <div class="upload-zone" id="roomZone">
-          <input type="file" id="roomPhotoInput" accept="image/*" onchange="handleRoomUpload(event)" />
-          <div class="upload-icon">📷</div>
-          <div class="upload-label">
-            <strong>Upload Your Room Photo</strong>
-            AI will apply your wallpaper to this room
+          <div class="view-card" id="vw-close" onclick="setView('close')">
+            <div class="view-card-icon">🔍</div>
+            <div class="view-card-title">Close-up</div>
+            <div class="view-card-sub">Wall detail</div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Resolution -->
-    <div class="panel-section">
-      <div class="section-title">Resolution</div>
-      <div class="res-group">
-        <button class="res-btn active" id="res-2k" onclick="setResolution('2K')">2K</button>
-        <button class="res-btn" id="res-4k" onclick="setResolution('4K')">4K</button>
+      <div class="field">
+        <label>Room Type</label>
+        <select id="roomType">
+          <optgroup label="Residential">
+            <option>Living Room</option><option>Bedroom</option>
+            <option>Dining Room</option><option>Kids Room</option>
+            <option>Bathroom</option><option>Entryway</option><option>Home Office</option>
+          </optgroup>
+          <optgroup label="Commercial">
+            <option>Cafe</option><option>Restaurant</option>
+            <option>Hotel Lobby</option><option>Boutique Shop</option>
+            <option>Co-Working Space</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Decoration Style</label>
+        <select id="decorStyle">
+          <option>Auto (Harmonious)</option><option>Modern</option>
+          <option>Bohemian</option><option>Scandinavian</option>
+          <option>Industrial</option><option>Classic / Traditional</option>
+          <option>Luxury</option><option>Minimalist</option>
+          <option>Art Deco</option><option>Biophilic (Natural)</option>
+          <option>Retro 70s</option><option>Rustic</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Wall Architecture</label>
+        <select id="wallArch">
+          <option>Plain Wall</option><option>Corner View</option>
+          <option>Window (Center)</option><option>Window (Side)</option>
+          <option>With Door</option><option>Archway</option><option>Wainscoting</option>
+        </select>
       </div>
     </div>
 
-    <!-- Error -->
-    <div id="errorBox" style="display:none; padding:16px 28px 0;">
-      <div class="error-state">
-        <span class="error-icon">⚠</span>
-        <span id="errorMsg"></span>
+    <!-- ERROR + GENERATE -->
+    <div class="ps">
+      <div class="error-box" id="errBox" style="display:none;">
+        <span>⚠</span><span id="errMsg"></span>
       </div>
-    </div>
-
-    <!-- Generate -->
-    <div class="panel-section">
-      <button class="generate-btn" id="generateBtn" onclick="generate()">
-        Generate Mockup <span class="btn-credits">(HD Quality)</span>
+      <button class="gen-btn" id="genBtn" onclick="generate()">
+        Generate Mockup &nbsp;<span style="font-size:10px;opacity:0.7;font-weight:400;letter-spacing:0;text-transform:none;">(HD Quality)</span>
       </button>
     </div>
 
   </aside>
 
-  <!-- ─── RIGHT RESULT AREA ─── -->
+  <!-- ─── RESULT ─── -->
   <main class="result-area">
 
-    <!-- Placeholder -->
-    <div class="result-placeholder" id="placeholder">
-      <div class="placeholder-icon">🖼</div>
-      <div class="placeholder-title">Your Mockup Appears Here</div>
-      <p class="placeholder-sub">Configure your wallpaper and space settings, then click Generate to create a photorealistic visualization.</p>
+    <div class="placeholder" id="ph">
+      <div class="ph-icon">🖼</div>
+      <div class="ph-title">Your Mockup Appears Here</div>
+      <p class="ph-sub">Upload your room photo + wallpaper, then hit Generate. AI will place the wallpaper on your exact wall.</p>
     </div>
 
-    <!-- Loading -->
-    <div class="loading-state" id="loadingState" style="display:none;">
-      <div class="loading-spinner"></div>
-      <div class="loading-text">Crafting your visualization…</div>
-      <div class="loading-steps" id="loadingSteps"></div>
+    <div class="loading" id="ld" style="display:none;">
+      <div class="spinner"></div>
+      <div class="loading-title">Crafting your visualization…</div>
+      <div class="loading-steps" id="ldSteps"></div>
     </div>
 
-    <!-- Result -->
-    <div id="resultCard" style="display:none;"></div>
+    <div id="rcWrap" style="display:none;"></div>
 
-    <!-- History -->
-    <div class="history-section" id="historySection" style="display:none;">
-      <div class="history-header">
-        <h3 class="history-title">Previous Generations</h3>
-        <button class="clear-btn" onclick="clearHistory()">Clear all</button>
+    <div class="history" id="histSec" style="display:none;">
+      <div class="hist-head">
+        <h3 class="hist-title">Previous Generations</h3>
+        <button class="clr-btn" onclick="clearHist()">Clear all</button>
       </div>
-      <div class="history-grid" id="historyGrid"></div>
+      <div class="hist-grid" id="histGrid"></div>
     </div>
 
   </main>
 </div>
 
 <script>
-// ─── STATE ────────────────────────────────────────────────
-let state = {
-  designType: 'repeating',
-  viewMode: 'wide',
-  spaceMode: 'ai',
-  resolution: '2K',
-  wallpaperFile: null,
+// ─── STATE ──────────────────────────────────────────────
+const S = {
+  mode: 'upload',       // 'upload' | 'ai'
+  dtype: 'repeating',
+  view: 'wide',
   roomFile: null,
-  history: JSON.parse(localStorage.getItem('wm_history') || '[]')
+  wallFile: null,
+  wallAIFile: null,
+  history: (() => { try { return JSON.parse(localStorage.getItem('wm_hist') || '[]'); } catch { return []; } })()
 };
 
-// ─── INIT ──────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  renderHistory();
-});
+document.addEventListener('DOMContentLoaded', renderHist);
 
-// ─── SETTERS ──────────────────────────────────────────────
-function setDesignType(type) {
-  state.designType = type;
-  document.getElementById('tab-repeating').classList.toggle('active', type === 'repeating');
-  document.getElementById('tab-mural').classList.toggle('active', type === 'mural');
+// ─── MODE ──────────────────────────────────────────────
+function setMode(m) {
+  S.mode = m;
+  document.getElementById('modeCardUpload').classList.toggle('active', m === 'upload');
+  document.getElementById('modeCardAI').classList.toggle('active', m === 'ai');
+  document.getElementById('uploadSection').style.display   = m === 'upload' ? '' : 'none';
+  document.getElementById('aiUploadSection').style.display = m === 'ai' ? '' : 'none';
+  document.getElementById('aiOptions').style.display       = m === 'ai' ? '' : 'none';
 }
 
-function setViewMode(mode) {
-  state.viewMode = mode;
-  document.getElementById('view-wide').classList.toggle('active', mode === 'wide');
-  document.getElementById('view-close').classList.toggle('active', mode === 'close');
+function setDtype(t) {
+  S.dtype = t;
+  document.getElementById('dt-rep').classList.toggle('active', t === 'repeating');
+  document.getElementById('dt-mur').classList.toggle('active', t === 'mural');
 }
 
-function setSpaceMode(mode) {
-  state.spaceMode = mode;
-  document.getElementById('modeAI').classList.toggle('active', mode === 'ai');
-  document.getElementById('modeUpload').classList.toggle('active', mode === 'upload');
-  document.getElementById('aiModeOptions').style.display = mode === 'ai' ? '' : 'none';
-  document.getElementById('uploadModeOptions').style.display = mode === 'upload' ? '' : 'none';
+function setView(v) {
+  S.view = v;
+  document.getElementById('vw-wide').classList.toggle('active', v === 'wide');
+  document.getElementById('vw-close').classList.toggle('active', v === 'close');
 }
 
-function setResolution(res) {
-  state.resolution = res;
-  document.getElementById('res-2k').classList.toggle('active', res === '2K');
-  document.getElementById('res-4k').classList.toggle('active', res === '4K');
-}
-
-function addSuggestion(text) {
-  const ta = document.getElementById('wallpaperDesc');
-  ta.value = (ta.value ? ta.value + ', ' : '') + text;
+function addChip(t) {
+  const ta = document.getElementById('wallDesc');
+  ta.value = (ta.value ? ta.value + ', ' : '') + t;
   ta.focus();
 }
 
-// ─── FILE UPLOADS ──────────────────────────────────────────
-function handleWallpaperUpload(e) {
+// ─── FILE UPLOADS ───────────────────────────────────────
+function handleUpload(type, e) {
   const file = e.target.files[0];
   if (!file) return;
-  state.wallpaperFile = file;
-  const zone = document.getElementById('wallpaperZone');
-  zone.classList.add('has-image');
+
+  const zoneId = { room: 'roomZone', wall: 'wallZone', wallAI: 'wallZoneAI' }[type];
+  const zone = document.getElementById(zoneId);
   const url = URL.createObjectURL(file);
-  zone.innerHTML = `<img src="${url}" alt="Wallpaper preview" />`;
+
+  zone.classList.add('filled');
+  zone.innerHTML = `<img src="${url}" alt="preview" /><input type="file" style="position:absolute;inset:0;opacity:0;cursor:pointer;" accept="image/*" onchange="handleUpload('${type}', event)" />`;
+
+  if (type === 'room') S.roomFile = file;
+  else if (type === 'wall') S.wallFile = file;
+  else if (type === 'wallAI') S.wallAIFile = file;
 }
 
-function handleRoomUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  state.roomFile = file;
-  const zone = document.getElementById('roomZone');
-  zone.classList.add('has-image');
-  const url = URL.createObjectURL(file);
-  zone.innerHTML = `<img src="${url}" alt="Room preview" />`;
-}
-
-// ─── LOADING MESSAGES ─────────────────────────────────────
-const loadingMessages = [
-  'Analyzing wallpaper pattern…',
+// ─── LOADING ────────────────────────────────────────────
+const STEPS_UPLOAD = [
+  'Analyzing your room photo…',
+  'Identifying wall surfaces…',
+  'Studying wallpaper design…',
+  'Applying wallpaper to your wall…',
+  'Finalizing photorealistic details…'
+];
+const STEPS_AI = [
   'Designing room composition…',
+  'Generating wallpaper layout…',
   'Applying textures and lighting…',
   'Rendering photorealistic details…',
   'Finalizing your mockup…'
 ];
 
-let loadingInterval;
+let ldTimer;
 
 function startLoading() {
-  document.getElementById('placeholder').style.display = 'none';
-  document.getElementById('resultCard').style.display = 'none';
-  document.getElementById('loadingState').style.display = 'flex';
-  document.getElementById('errorBox').style.display = 'none';
+  document.getElementById('ph').style.display = 'none';
+  document.getElementById('rcWrap').style.display = 'none';
+  document.getElementById('ld').style.display = 'flex';
+  document.getElementById('errBox').style.display = 'none';
 
-  const stepsEl = document.getElementById('loadingSteps');
-  stepsEl.innerHTML = '';
+  const el = document.getElementById('ldSteps');
+  el.innerHTML = '';
+  const steps = S.mode === 'upload' ? STEPS_UPLOAD : STEPS_AI;
   let i = 0;
 
-  function showNextStep() {
-    if (i < loadingMessages.length) {
-      const el = document.createElement('div');
-      el.className = 'loading-step';
-      el.textContent = '— ' + loadingMessages[i];
-      stepsEl.appendChild(el);
-      requestAnimationFrame(() => el.classList.add('visible'));
-      i++;
+  function next() {
+    if (i < steps.length) {
+      const d = document.createElement('div');
+      d.className = 'lstep';
+      d.textContent = '— ' + steps[i++];
+      el.appendChild(d);
+      requestAnimationFrame(() => d.classList.add('show'));
     }
   }
-
-  showNextStep();
-  loadingInterval = setInterval(showNextStep, 3000);
+  next();
+  ldTimer = setInterval(next, 4000);
 }
 
 function stopLoading() {
-  clearInterval(loadingInterval);
-  document.getElementById('loadingState').style.display = 'none';
+  clearInterval(ldTimer);
+  document.getElementById('ld').style.display = 'none';
 }
 
-// ─── GENERATE ─────────────────────────────────────────────
+// ─── GENERATE ───────────────────────────────────────────
 async function generate() {
-  const desc = document.getElementById('wallpaperDesc').value.trim();
+  const desc = document.getElementById('wallDesc').value.trim();
 
-  if (!desc && !state.wallpaperFile) {
-    showError('Please upload a wallpaper design or describe what you want to generate.');
-    return;
+  // Validation
+  if (S.mode === 'upload') {
+    if (!S.roomFile) { showErr('Please upload your room photo first.'); return; }
+    if (!S.wallFile && !desc) { showErr('Please upload a wallpaper photo or describe it.'); return; }
+  } else {
+    if (!S.wallAIFile && !desc) { showErr('Please upload a wallpaper design or describe it.'); return; }
   }
 
-  const btn = document.getElementById('generateBtn');
+  hideErr();
+  const btn = document.getElementById('genBtn');
   btn.disabled = true;
-
-  hideError();
   startLoading();
 
   try {
     let result;
-
-    if (state.spaceMode === 'upload' && state.roomFile) {
-      result = await applyToUploadedRoom(desc);
+    if (S.mode === 'upload') {
+      result = await doApply(desc);
     } else {
-      result = await generateAIRoom(desc);
+      result = await doAI(desc);
     }
-
     stopLoading();
     showResult(result);
-    saveToHistory(result);
-
+    saveHist(result);
   } catch (err) {
     stopLoading();
-    showError(err.message || 'Something went wrong. Please try again.');
-    document.getElementById('placeholder').style.display = 'flex';
+    showErr(err.message || 'Something went wrong. Please try again.');
+    document.getElementById('ph').style.display = 'flex';
   } finally {
     btn.disabled = false;
   }
 }
 
-async function generateAIRoom(desc) {
+async function doApply(desc) {
+  const fd = new FormData();
+  fd.append('roomPhoto', S.roomFile);
+  if (S.wallFile) fd.append('wallpaperPhoto', S.wallFile);
+  fd.append('wallpaperDescription', desc || '');
+  fd.append('designType', S.dtype);
+  fd.append('decorationStyle', document.getElementById('decorStyle')?.value || 'Modern');
+
+  const r = await fetch('/api/apply-wallpaper', { method: 'POST', body: fd });
+  const d = await r.json();
+  if (!d.success) throw new Error(d.error || 'Failed to apply wallpaper.');
+  return { imageUrl: d.imageUrl, label: 'Your Room', sub: desc.substring(0, 70) || 'Custom wallpaper applied' };
+}
+
+async function doAI(desc) {
   const body = {
     wallpaperDescription: desc || 'elegant decorative pattern',
-    designType: state.designType,
+    designType: S.dtype,
     roomType: document.getElementById('roomType').value,
     decorationStyle: document.getElementById('decorStyle').value,
     wallArchitecture: document.getElementById('wallArch').value,
-    viewMode: state.viewMode,
-    resolution: state.resolution
+    viewMode: S.view,
+    resolution: '2K'
   };
-
-  const res = await fetch('/api/generate-room', {
+  const r = await fetch('/api/generate-room', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
-
-  const data = await res.json();
-  if (!data.success) throw new Error(data.error || 'Generation failed');
-
-  return {
-    imageUrl: data.imageUrl,
-    roomType: body.roomType,
-    style: body.decorationStyle,
-    desc: body.wallpaperDescription
-  };
+  const d = await r.json();
+  if (!d.success) throw new Error(d.error || 'Generation failed.');
+  return { imageUrl: d.imageUrl, label: `${body.roomType} — ${body.decorationStyle}`, sub: body.wallpaperDescription.substring(0, 70) };
 }
 
-async function applyToUploadedRoom(desc) {
-  const formData = new FormData();
-  formData.append('roomPhoto', state.roomFile);
-  formData.append('wallpaperDescription', desc || 'elegant decorative pattern');
-  formData.append('designType', state.designType);
-  formData.append('decorationStyle', document.getElementById('decorStyle').value);
-
-  const res = await fetch('/api/apply-wallpaper', {
-    method: 'POST',
-    body: formData
-  });
-
-  const data = await res.json();
-  if (!data.success) throw new Error(data.error || 'Application failed');
-
-  return {
-    imageUrl: data.imageUrl,
-    roomType: 'Uploaded Room',
-    style: document.getElementById('decorStyle').value,
-    desc: desc
-  };
-}
-
-// ─── SHOW RESULT ──────────────────────────────────────────
-function showResult(result) {
-  const card = document.getElementById('resultCard');
-  card.style.display = 'block';
-
-  const roomLabel = result.roomType || 'Room';
-  const styleLabel = result.style || '';
-
-  card.innerHTML = `
-    <div class="result-card">
-      <div class="result-image-wrap">
-        <img src="${result.imageUrl}" alt="Mockup result" />
-        <div class="result-overlay">
-          <a href="${result.imageUrl}" download="wallmockup.jpg" class="overlay-btn gold">
-            ↓ Download
-          </a>
-          <button class="overlay-btn" onclick="generate()">
-            ↺ Regenerate
-          </button>
+// ─── RESULT ─────────────────────────────────────────────
+function showResult({ imageUrl, label, sub }) {
+  const wrap = document.getElementById('rcWrap');
+  wrap.style.display = 'block';
+  wrap.innerHTML = `
+    <div class="rcard">
+      <div class="rimg-wrap">
+        <img src="${imageUrl}" alt="Mockup result" />
+        <div class="roverlay">
+          <a href="${imageUrl}" download="wallmockup.jpg" class="obtn gold">↓ Download</a>
+          <button class="obtn" onclick="generate()">↺ Regenerate</button>
         </div>
       </div>
-      <div class="result-meta">
-        <div class="result-info">
-          <strong>${roomLabel} — ${styleLabel}</strong>
-          ${result.desc ? result.desc.substring(0, 80) + (result.desc.length > 80 ? '…' : '') : ''}
+      <div class="rmeta">
+        <div class="rinfo">
+          <strong>${label}</strong>${sub || ''}
         </div>
-        <div class="result-actions">
-          <a href="${result.imageUrl}" download="wallmockup.jpg" class="action-btn primary">↓ Download HD</a>
-          <button class="action-btn" onclick="generate()">↺ New Version</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// ─── HISTORY ─────────────────────────────────────────────
-function saveToHistory(result) {
-  state.history.unshift({ imageUrl: result.imageUrl, timestamp: Date.now() });
-  state.history = state.history.slice(0, 9); // keep last 9
-  localStorage.setItem('wm_history', JSON.stringify(state.history));
-  renderHistory();
-}
-
-function renderHistory() {
-  const section = document.getElementById('historySection');
-  const grid = document.getElementById('historyGrid');
-
-  if (state.history.length === 0) {
-    section.style.display = 'none';
-    return;
-  }
-
-  section.style.display = 'block';
-  grid.innerHTML = state.history.map(item => `
-    <div class="history-item" onclick="viewHistoryItem('${item.imageUrl}')">
-      <img src="${item.imageUrl}" alt="Previous mockup" loading="lazy" />
-    </div>
-  `).join('');
-}
-
-function viewHistoryItem(url) {
-  const card = document.getElementById('resultCard');
-  card.style.display = 'block';
-  document.getElementById('placeholder').style.display = 'none';
-  card.innerHTML = `
-    <div class="result-card">
-      <div class="result-image-wrap">
-        <img src="${url}" alt="Mockup" />
-        <div class="result-overlay">
-          <a href="${url}" download="wallmockup.jpg" class="overlay-btn gold">↓ Download</a>
+        <div class="raction">
+          <a href="${imageUrl}" download="wallmockup.jpg" class="abtn p">↓ Download HD</a>
+          <button class="abtn" onclick="generate()">↺ New Version</button>
         </div>
       </div>
-      <div class="result-meta">
-        <div class="result-info"><strong>Previous Generation</strong></div>
-        <div class="result-actions">
-          <a href="${url}" download="wallmockup.jpg" class="action-btn primary">↓ Download</a>
-        </div>
-      </div>
-    </div>
-  `;
+    </div>`;
+}
+
+// ─── HISTORY ────────────────────────────────────────────
+function saveHist({ imageUrl }) {
+  S.history.unshift({ imageUrl, t: Date.now() });
+  S.history = S.history.slice(0, 9);
+  try { localStorage.setItem('wm_hist', JSON.stringify(S.history)); } catch {}
+  renderHist();
+}
+
+function renderHist() {
+  const sec = document.getElementById('histSec');
+  if (!S.history.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  document.getElementById('histGrid').innerHTML = S.history.map(h => `
+    <div class="hitem" onclick="showPrev('${h.imageUrl}')">
+      <img src="${h.imageUrl}" alt="prev" loading="lazy" />
+    </div>`).join('');
+}
+
+function showPrev(url) {
+  document.getElementById('ph').style.display = 'none';
+  showResult({ imageUrl: url, label: 'Previous Generation', sub: '' });
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function clearHistory() {
-  state.history = [];
-  localStorage.removeItem('wm_history');
-  renderHistory();
+function clearHist() {
+  S.history = [];
+  try { localStorage.removeItem('wm_hist'); } catch {}
+  renderHist();
 }
 
-// ─── ERROR ────────────────────────────────────────────────
-function showError(msg) {
-  const box = document.getElementById('errorBox');
-  document.getElementById('errorMsg').textContent = msg;
-  box.style.display = 'block';
+// ─── ERRORS ─────────────────────────────────────────────
+function showErr(msg) {
+  const b = document.getElementById('errBox');
+  document.getElementById('errMsg').textContent = msg;
+  b.style.display = 'flex';
 }
-
-function hideError() {
-  document.getElementById('errorBox').style.display = 'none';
-}
+function hideErr() { document.getElementById('errBox').style.display = 'none'; }
 </script>
 </body>
 </html>
