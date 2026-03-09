@@ -90,15 +90,16 @@ app.post('/api/apply-wallpaper', upload.fields([
           { type: 'image_url', image_url: { url: roomDataURL } },
           {
             type: 'text',
-            text: `Look at this room photo carefully. Describe in detail:
-1. The exact room type (living room, bedroom, kids room, etc.)
-2. The main wall — its position, size, any windows/doors on it
-3. All furniture visible and their positions
-4. The lighting and color palette
-5. The floor material
-6. The camera angle and perspective
+            text: `Analyseer deze kamer foto zorgvuldig en beschrijf precies:
+1. Type kamer (woonkamer, slaapkamer, kinderkamer, etc.)
+2. De GROOTSTE VLAKKE FRONTALE MUUR — kleur, afmetingen, wat erop staat
+3. Alle meubels met exacte posities
+4. Belichting en kleurpalet
+5. Vloermateriaal
+6. Camerahoek en perspectief
 
-Be very precise. I need this to recreate the exact same room.`
+Identificeer de beste muur voor behang: bij voorkeur een RECHTE VLAKKE MUUR die frontaal zichtbaar is — geen schuine hoekweergaves.
+Wees zeer precies zodat ik exact dezelfde kamer kan nabootsen.`
           }
         ]
       }],
@@ -108,7 +109,6 @@ Be very precise. I need this to recreate the exact same room.`
     const roomDesc = analysisResp.choices[0].message.content;
 
     // ── Step 2: Build the edit prompt ────────────────────────────────────────
-    // If user uploaded a wallpaper photo, describe it; otherwise use text description
     let wallpaperVisual = wallpaperDescription || 'elegant decorative wallpaper pattern';
 
     if (wallFile) {
@@ -121,30 +121,37 @@ Be very precise. I need this to recreate the exact same room.`
             { type: 'image_url', image_url: { url: wallDataURL } },
             {
               type: 'text',
-              text: 'Describe this wallpaper design in extreme detail: the colors, pattern, motifs, style, texture, repeat structure. Be very specific so it can be reproduced exactly.'
+              text: 'Beschrijf dit behang ontwerp in extreme detail: de exacte kleuren, het patroon, motieven, stijl, textuur, herhaalstructuur. Wees zeer specifiek zodat het exact gereproduceerd kan worden.'
             }
           ]
         }],
-        max_tokens: 400
+        max_tokens: 500
       });
       wallpaperVisual = wallAnalysis.choices[0].message.content;
     }
 
     // ── Step 3: Generate the final image ─────────────────────────────────────
     const finalPrompt = `
-Photorealistic interior room photo. Keep EVERYTHING exactly the same as this description:
+Photorealistic interior room photo.
+
+ROOM (keep 100% identical):
 ${roomDesc}
 
-THE ONLY CHANGE: Replace the wall surface with this wallpaper — apply it directly onto the wall, perfectly fitted, no wrinkles, photorealistic texture:
-Wallpaper: ${wallpaperVisual}
-${designType === 'mural' ? 'Applied as a single full-wall mural.' : 'Applied as a seamlessly repeating pattern across the entire wall.'}
+WALL CHANGE — THIS IS THE ONLY THING THAT CHANGES:
+The main wall must be shown as a FLAT, STRAIGHT, RECTANGULAR wall viewed from the FRONT.
+NO diagonal angles, NO corner views, NO triangular perspective cuts.
+The wall must fill a large portion of the image as a perfect rectangle.
 
-CRITICAL RULES:
-- Do NOT change furniture, layout, lighting, floor, ceiling, or anything else
-- Do NOT change the room type or camera angle  
-- Only the wall surface changes — everything else stays 100% identical
-- The wallpaper must look physically applied to the wall with correct perspective and lighting
-- Professional interior photography quality
+Cover this flat rectangular wall COMPLETELY with the following wallpaper:
+${wallpaperVisual}
+${designType === 'mural' ? 'Applied as one single full-wall mural — the entire pattern is 100% visible.' : 'Applied as a seamlessly repeating pattern — the full pattern is 100% visible across the entire wall.'}
+
+CRITICAL:
+- The wallpaper must be 100% visible, fully covering the wall from edge to edge
+- No partial views, no cut-off patterns, no diagonal cuts
+- The wall is shown straight/frontal — flat rectangle, not angled
+- Keep all furniture, floor, ceiling, lighting IDENTICAL
+- Professional interior photography, perfect lighting
     `.trim();
 
     const response = await openai.images.generate({
